@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Setup and troubleshooting
+    url: https://github.com/egalindo2167/vita-soloist-receiver/blob/main/SUPPORT.md
+    about: Start here for installation, audio routing and connection checks.
+  - name: Private security report
+    url: https://github.com/egalindo2167/vita-soloist-receiver/security/advisories/new
+    about: Report vulnerabilities privately; never post credentials in an issue.

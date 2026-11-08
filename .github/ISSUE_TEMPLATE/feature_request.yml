@@ -1,0 +1,21 @@
+name: Feature request
+description: Suggest a focused improvement to the receiver or Windows host.
+title: "[Feature]: "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would this help you do?
+      description: Describe the use case and what is difficult today.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Include any relevant Vita controls or setup tradeoffs.
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: Check README.md and SEARCH.md for current upstream/platform limits. Do not include credentials or private account data.

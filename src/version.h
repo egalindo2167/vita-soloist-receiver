@@ -1,0 +1,4 @@
+#ifndef RECEIVER_VERSION_H
+#define RECEIVER_VERSION_H
+#define RECEIVER_VERSION "1.3"
+#endif

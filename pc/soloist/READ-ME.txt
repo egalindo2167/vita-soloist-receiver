@@ -1,0 +1,15 @@
+Extract the official Spotify Soloist Windows x86_64 ZIP contents here.
+Keep soloist.exe and all companion files together.
+
+Official downloads:
+https://developer.spotify.com/documentation/soloist/reference/downloads-and-updates
+
+Personal key:
+https://developer.spotify.com/dashboard/soloist
+
+Then double-click Setup Host.cmd in the parent pc folder.
+Enter your own key at its hidden prompt; never put a key in this file.
+After setup, the PC waits in the background and the Vita initiates connections.
+See HOST_SETUP.md in the receiver ZIP for full instructions.
+
+Spotify Soloist is downloaded separately and is not redistributed in this ZIP.

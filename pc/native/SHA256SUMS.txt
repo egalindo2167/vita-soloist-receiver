@@ -1,0 +1,2 @@
+b60905db3ed1a2b9f33be9d5c74ceb233d53f1dab5ababe27f683604e52389ff  opus.dll
+7849ffbdc907119f552a36878cef88ba5d58e6a2b20d7fd4b050b431b94c8b8f  soloist-capture.exe

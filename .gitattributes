@@ -1,0 +1,16 @@
+# Keep scripts/source portable when committing from Windows with GitHub Desktop.
+* text=auto eol=lf
+*.cmd text eol=crlf
+*.sh text eol=lf
+*.py text eol=lf
+*.c text eol=lf
+*.h text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.svg text eol=lf
+*.png binary
+*.dll binary
+*.exe binary
+*.vpk binary
+*.zip binary
