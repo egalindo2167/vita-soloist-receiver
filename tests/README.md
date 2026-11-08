@@ -1,5 +1,22 @@
 # Verification
 
+## Dependency-download follow-up
+
+The next user-reported run shows Windows passing, with native stopped before
+compilation by HTTP 504 during dependency download. Eight new tests cover
+temporary 504 recovery (including a real local HTTP server), partial-read cleanup,
+four-attempt exhaustion, no retry/extract for wrong bytes, invalid/valid cache
+handling, immediate failure for permanent HTTP/certificate errors, interrupted
+extraction recovery and the official API fallback's binary/no-auth headers.
+
+Fresh official Opus and Mbed TLS archives were hash-verified/extracted in the
+local environment. Mbed TLS's standard URL repeatedly returned 504; the official
+asset API succeeded with the identical pinned archive. A real CMake download/
+extract smoke build exercised the production URL list/header/hash configuration.
+All 183 Python tests pass locally with optional native/CLI adapters enabled.
+The existing 15 native checks passed too. A new complete GitHub run remains
+required; these checks do not certify remote service availability.
+
 ## First Windows CI follow-up
 
 The initial uploaded Windows log ran 175 tests, with two errors and 14 expected
@@ -17,7 +34,8 @@ in finally. Production TLS handshake deadlines/authentication are unchanged.
 
 All 175 tests pass locally with the optional native/CLI adapters enabled. This
 is Linux plus an explicitly exercised mocked Windows supervisor branch, not
-evidence of a successful corrected GitHub Windows run. Push the changed files
+evidence by itself of a successful GitHub Windows run; the following screenshot
+reported that job passing as described above. Push the changed files
 to start a new workflow run; rerunning the old commit does not apply the fixes.
 
 ## Public release packaging checks
@@ -280,5 +298,5 @@ settings-worker staging and quality-menu framebuffer/OLED bounds.
 
 The workflow includes a Windows job using the actual bundled encoder DLL. The
 initial Windows log and subsequent fixture corrections are described above;
-the corrected remote run remains to be verified. Windows capture, Vita touch
+the new download-fix run remains to be verified. Windows capture, Vita touch
 input and sustained variable-network Auto behavior remain physical-device checks.

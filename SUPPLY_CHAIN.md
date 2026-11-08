@@ -87,6 +87,22 @@ Mbed TLS remains 3.6.7, source SHA-256:
 Opus/Mbed TLS fetches in CMakeLists.txt and tools/fetch_build_sources.py both
 verify their archive hashes. Review both when updating them.
 
+The native source helper makes at most four attempts after temporary HTTP/network
+errors, waiting 2/4/8 seconds between attempts, with a 30-second socket timeout.
+It publishes only a complete hash-verified temporary download, replaces invalid
+cached archives, and extracts into a staging directory before publishing source.
+Checksum failures, certificate errors and permanent HTTP errors are not bypassed.
+Retry diagnostics go to stderr so the CLI's stdout remains a usable source path.
+
+If Mbed TLS's standard release URL times out, both the helper and CMake can use
+the **official GitHub API for the same public release asset**:
+https://api.github.com/repos/Mbed-TLS/mbedtls/releases/assets/464469768 .
+The request specifies `Accept: application/octet-stream`; no GitHub/Spotify key
+is used. The returned 5,473,689 bytes were independently SHA-256 checked against
+the unchanged a7e8bcb... pin above. This is not a third-party mirror or a
+GitHub-generated source snapshot. A persistent upstream outage/rate limit can
+still stop a build after bounded retries; no error is treated as a passing check.
+
 The build workflow now pins these external actions/image:
 
 - actions/checkout (v6.0.3): `df4cb1c069e1874edd31b4311f1884172cec0e10`

@@ -7,7 +7,7 @@
   GCC 15.2. The final application build has no compiler warnings.
 - SDK archive: vitasdk-x86_64-linux-gnu-2026-05-24_12-05-02.tar.bz2, SHA-256
   b1a8f4d6e41460c9ecf2c3c4590eb7eb3ea6b690767f508bd5696dbc77a4272e.
-- **175 Python tests passed, no skips**, with ResourceWarning treated as an error.
+- **183 Python tests passed, no skips**, with ResourceWarning treated as an error.
   Python 3.14.9 / OpenSSL 3.5.9 and hash-locked dependencies. The suite includes
   the native receiver TLS/Opus/profile adapters and offline official CLI checks
   (Tailscale 1.104.5, ngrok 3.39.13). No live account or public tunnel was created.
@@ -84,12 +84,12 @@ was changed in this distribution pass. The maintainer reports a second user
 completed local setup in about 15 minutes; this is reported feedback, not a
 measured benchmark or exhaustive feature/network certification.
 
-An extracted final archive was staged in a new temporary Git repository: 219
+An extracted final archive was staged in a new temporary Git repository: 220
 source/docs/runtime-library files were eligible, and the two dist output files
 were ignored. Required .github files, editable icon and allowed native payloads
 were included. Private-file ignore cases, native-binary exceptions, CMD CRLF /
 shell LF attributes, extracted Markdown links and YAML were checked. The final
-archive has 221 files; its VPK/capture-helper/Opus hashes match the preceding
+archive has 222 files; its VPK/capture-helper/Opus hashes match the preceding
 1.3 application build exactly.
 
 The recorded VPK hash describes the supplied build, not a promise that a rebuild
@@ -114,10 +114,41 @@ After the fixes, the complete **175-test suite passed with no skips** on Linux
 with all optional native/CLI adapters, using Python 3.14.9 / OpenSSL 3.5.9.
 As a negative control, restoring the old 0.5-second accept lifetime makes the
 delayed-client relay test fail with the expected authenticated-accept timeout.
-The corrected Windows branch is tested with mocks; a fresh GitHub Windows run
-is still required. SHA-pinned official actions were also updated to verified
+The corrected Windows branch was tested locally with mocks; the following
+user-reported run showed the Windows job passing. SHA-pinned official actions were also updated to verified
 Node 24 releases; their YAML, inputs and read-only/nonpersistent-token policy
-were checked locally. No remote rerun or successful VPK CI build is claimed.
+were checked locally. The final VPK CI build has not yet passed.
+
+## Dependency-download follow-up
+
+The user's next screenshot shows Windows passing and native failing during
+source download with HTTP 504, before compilation/tests. A fresh local check
+downloaded/verified Opus successfully but reproduced repeated 504s from Mbed
+TLS's standard release URL. Its official GitHub asset API returned the identical
+5,473,689-byte archive with the unchanged pinned SHA-256.
+
+The helper now retries temporary HTTP/network failures up to four times with
+2/4/8-second waits and a 30-second socket timeout. Mbed TLS uses that official
+API as a fallback after a temporary primary-URL failure. CMake has the same
+alternative URL, explicit archive filename, binary Accept header and existing
+required hash. No account/token, third-party mirror or generated source snapshot
+is used. Wrong hashes/certificates/permanent HTTP errors fail closed. Downloads
+and extraction are staged atomically to avoid incomplete cache entries.
+
+Eight new tests cover retries, cleanup, exhaustion, invalid-cache recovery,
+hash/certificate rejection, interrupted extraction and API request headers,
+including a real local HTTP 504-then-success fixture. All **183 Python tests
+passed with no skips** using the optional native/CLI adapters. The existing 15
+native sanitizer programs passed. One local full run initially hit missing
+execute permission on the cached test decoder; after correcting that local file
+permission, the full suite passed. No test was skipped to hide that failure.
+
+Fresh real downloads exercised the helper's primary-504 → official-API path and
+verified/extracted the archive. A standalone CMake download/extract build using
+the exact production URL/header/hash block also passed. These are source-fetch
+checks, not a claimed complete GitHub/VitaSDK build. Vita/PC runtime source,
+native payloads and the supplied VPK are unchanged. A new complete GitHub run
+still needs to finish before publication.
 
 ## Upstream and hardware limits
 
@@ -131,8 +162,9 @@ for a user's actual build. Full large-playlist search needs another data source.
 Actual Windows WASAPI/cable behavior, physical Vita touch/keyboard/panel handling
 and sustained Wi-Fi playback have not been executed here. The Windows helper
 is unchanged from its source-verified 1.1 build. The first Windows CI log is
-described above; no corrected remote run or Windows audio-hardware execution is
-claimed in this pass. Passing automated checks is not a security audit.
+described above; a later screenshot reports Windows green. No Windows audio-
+hardware execution or completed final GitHub VPK build is claimed in this pass.
+Passing automated checks is not a security audit.
 
 Install over the existing title without deleting data and run Upgrade Host.
 Check a large playlist's returned count with Queue Availability.cmd, submit a

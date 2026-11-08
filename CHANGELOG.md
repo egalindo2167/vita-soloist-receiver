@@ -2,6 +2,13 @@
 
 ## 1.3
 
+- Dependency-download follow-up: four bounded attempts for temporary HTTP/network
+  failures, checked atomic archive publication/extraction, invalid-cache recovery
+  and stderr-only retry diagnostics. Hash/certificate/permanent HTTP errors fail
+  closed. Mbed TLS has an official GitHub asset-API alternative in the helper and
+  CMake, using the identical archive and unchanged SHA-256; no credentials needed.
+- Eight new tests cover real HTTP 504 recovery, interrupted reads/extraction,
+  bounded exhaustion, checksum rejection, cache recovery and binary-API headers.
 - First Windows CI follow-up: isolate the fake subprocess from real Windows Job
   APIs and exercise its assign/close lifecycle on every test OS. Give the
   one-shot TLS relay fixture a bounded accept wait and explicit IPv4 endpoint,

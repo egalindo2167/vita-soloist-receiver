@@ -30,6 +30,9 @@ set(ENABLE_TESTING OFF CACHE BOOL "" FORCE)
 set(MBEDTLS_USER_CONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/tls_config.h" CACHE FILEPATH "" FORCE)
 FetchContent_Declare(mbedtls
  URL https://github.com/Mbed-TLS/mbedtls/releases/download/mbedtls-3.6.7/mbedtls-3.6.7.tar.bz2
+     https://api.github.com/repos/Mbed-TLS/mbedtls/releases/assets/464469768
+ DOWNLOAD_NAME mbedtls-3.6.7.tar.bz2
+ HTTP_HEADER "Accept: application/octet-stream"
  URL_HASH SHA256=a7e8bcbec0e6f761b4af24f25677626b35f762f68eef79c08677a363212d11f6)
 FetchContent_MakeAvailable(mbedtls)
 add_executable(receiver src/main.c src/debugScreen.c src/ui.c src/ui_render.c src/ui_draw.c src/ui_font_data.c src/control.c src/control_state.c src/pc_link.c src/screen_policy.c src/opus_stream.c src/secure_net.c src/remote_profile.c src/audio_quality.c src/settings_menu.c src/display_settings.c src/search_keyboard.c)

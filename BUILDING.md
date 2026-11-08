@@ -30,6 +30,12 @@ The hash recorded in BUILD_VALIDATION.md identifies the supplied 1.3 build.
 A rebuild can differ by environment/path; use its generated checksums rather
 than assuming byte-identical output or an automated reproducibility attestation.
 
+The native dependency helper retries temporary download failures up to four
+times and safely discards partial downloads/extractions. Mbed TLS also has an
+official release-asset API fallback in both that helper and CMake; the archive
+and required SHA-256 are identical. See SUPPLY_CHAIN.md. Persistent upstream
+outages can still require retrying a failed job after the service recovers.
+
 The packager refuses a populated `pc/favorites.json`: that file must stay an
 empty template. It omits private runtime files and independently downloaded
 Soloist/provider/driver binaries. Use a clean checkout and inspect the output
