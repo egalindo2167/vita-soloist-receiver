@@ -1,11 +1,10 @@
-# Vita interface — version 1.3
+# Vita interface — version 1.3.1
 
-## Update an existing installation
+## First use
 
-Close the Vita app, extract the complete 1.3 ZIP, run **pc/Upgrade Host.cmd** and
-install **dist/vita-audio-receiver.vpk** over the existing Vita app. Both ends
-must be updated for search. Keep the existing data directory; no pairing, cable,
-Spotify login or Funnel setup needs repeating. See README.md.
+Complete [HOST_SETUP.md](HOST_SETUP.md), install the release VPK and open it
+once to create its data folder before USB pairing. Start on your trusted home
+Wi-Fi. The PC host stays running; open the Vita app to connect and choose music.
 
 ## Playback and navigation
 
@@ -24,8 +23,15 @@ when playing. A tap in the larger surrounding target activates the same control.
 | Triangle | Queue | Next tab, returning to Now playing after Favorites |
 | Square | Toggle shuffle | Queue: search; Favorites: shuffle |
 | SELECT | Open Settings | Open Settings |
-| Circle | Disconnect | Return to Now playing |
+| Circle | Ask before disconnecting | Return to Now playing |
 | START | Exit | Exit |
+
+Circle from Now playing opens a confirmation. **X / Disconnect** stops the
+connection; **Circle / Back** keeps listening. Circle in a browser/settings/
+keyboard retains its ordinary back/cancel action. Offline Circle cancels the
+pending connection. START still exits.
+
+![Disconnect confirmation](docs/ui-disconnect.png)
 
 Touch the progress bar to seek. Its hit area extends above/below the thin line.
 Drag the Spotify volume slider; tapping the speaker icon mutes/restores its
@@ -78,7 +84,7 @@ after it closes. The sidebar can return directly to a music tab.
   96/128/160/192/256/320 kbps. L/R or Up/Down changes connection tab; Left/Right
   or X cycles the quality. Settings back arrow/Circle returns. See QUALITY.md.
 - **Screen timeout:** cycles 30 seconds, 1 minute, 2 minutes, 5 minutes and Never.
-  Default is 1 minute, matching 1.1. This is saved separately in display.bin.
+  Default is 1 minute. This is saved separately in display.bin.
 - **Connection route:** Local Wi-Fi or Remote. Changing it reconnects the Vita.
   Existing saved PC/Funnel settings are retained.
 - **PC connection:** opens the existing address editor or remote-endpoint view.
@@ -110,3 +116,9 @@ the app or launching a game still interrupts playback. See README.md for limits.
 The screenshots are generated with this release's actual renderer and original
 fictional music/artwork fixtures. Physical touch/panel behavior needs checking
 on a Vita; desktop previews are not hardware measurements.
+
+## Updating to a newer release
+
+Install the new VPK over the existing title and run Upgrade Host from the full
+new release ZIP. Keep saved data; normal updates need no new pairing or login.
+See HOST_SETUP.md for the short upgrade procedure.

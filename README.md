@@ -17,7 +17,7 @@ terms remain separate from this project.
 ## Download and start
 
 Open **[Releases](https://github.com/egalindo2167/vita-soloist-receiver/releases/latest)**
-and download the complete **vita-audio-receiver-1.3.zip** application asset.
+and download the complete **vita-audio-receiver-1.3.1.zip** application asset.
 Extract it before running anything. Keep the PC files and `pc/native/` together.
 The release also provides a standalone VPK for updating an existing setup.
 
@@ -34,9 +34,8 @@ access is optional and can be added later using **[FUNNEL_SETUP.md](FUNNEL_SETUP
 
 **Existing installation:** close the Vita app, extract the new release ZIP, run
 **pc/Upgrade Host.cmd**, then install **dist/vita-audio-receiver.vpk** over the
-current app. Keep all saved data. Version 1.3 search needs both host and VPK
-updated. Login/key, cable routing, pairing, favorites, quality and Funnel settings
-are retained; no new pairing is needed for an ordinary upgrade.
+current app. Keep all saved data. Use the host and VPK from the same public release. Login/key, cable routing,
+pairing, favorites, codec/bitrate and Funnel settings are retained; no new pairing is needed for an ordinary upgrade.
 
 ## Requirements
 
@@ -44,10 +43,13 @@ are retained; no new pairing is needed for an ordinary upgrade.
 | --- | --- |
 | Vita | Homebrew-enabled PS Vita and VitaShell for VPK installation/USB pairing |
 | PC | Windows 11 x64, kept awake and signed in while listening |
-| Python | 64-bit Python 3.14 with TLS-PSK support; setup installs hash-locked packages |
+| Python | Standard x64 CPython 3.14 with TLS-PSK; not 3.14t/free-threaded or ARM64 |
 | Spotify | Your own official Windows x86_64 Soloist download and personal API key; see its current account/setup requirements |
 | Audio | A separately installed virtual cable, normally VB-CABLE, dedicated to Soloist |
 | Network | Working Vita Wi-Fi; same-LAN setup or optional Tailscale Funnel remote access |
+
+Windows ARM/x64 emulation is untested. Custom Windows EXE/DLL files are currently
+unsigned; see [Windows setup/security troubleshooting](docs/WINDOWS_TROUBLESHOOTING.md).
 
 No Soloist executable, key, virtual-cable installer, Spotify account data or
 provider client is redistributed. The VPK includes its decoder/TLS libraries;
@@ -87,7 +89,7 @@ The Opus bitrate describes this app's PC-to-Vita link, not Spotify source qualit
 Opus is lossy; even a lossless Soloist source is not bit-perfect through this
 capture/resample/encode path. Buffering helps delivery jitter but cannot restore
 samples lost by a Windows audio driver. Full quality/network details are in
-[QUALITY.md](QUALITY.md) and [NETWORK_TUNING.md](NETWORK_TUNING.md).
+[QUALITY.md](QUALITY.md) and [NETWORK_TUNING.md](docs/NETWORK_TUNING.md).
 
 Soloist is a separate upstream dependency; its builds/account requirements and
 API can change. Update an expired official build as needed. This app does not
@@ -104,10 +106,9 @@ project, not an independently audited public internet service.
 | [FUNNEL_SETUP.md](FUNNEL_SETUP.md) | Optional remote access without a Vita VPN client |
 | [SEARCH.md](SEARCH.md) / [FAVORITES.md](FAVORITES.md) | Queue search and local song/playlist shortcuts |
 | [SUPPORT.md](SUPPORT.md) | Troubleshooting, logs and bug reports |
-| [USER_GUIDE.md](USER_GUIDE.md) | Full reference, bandwidth, controls and technical limits |
+| [Full reference](docs/REFERENCE.md) | Full reference, bandwidth, controls and technical limits |
 | [SECURITY.md](SECURITY.md) | Trust boundaries and private vulnerability reporting |
-| [BUILDING.md](BUILDING.md) / [CONTRIBUTING.md](CONTRIBUTING.md) | Source builds, testing and contributions |
-| [BUILD_VALIDATION.md](BUILD_VALIDATION.md) | Checks actually performed and hardware limits |
+| [BUILDING.md](docs/dev/BUILDING.md) / [CONTRIBUTING.md](CONTRIBUTING.md) | Source builds, testing and contributions |
 | [CHANGELOG.md](CHANGELOG.md) | Version history |
 
 Use **Issues** for reproducible bugs and feature requests. Inspect/redact logs
@@ -118,8 +119,12 @@ data. Report vulnerabilities privately using the instructions in SECURITY.md.
 
 Project-authored code uses the [MIT license](LICENSE). Third-party components
 retain their own licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
-and [SUPPLY_CHAIN.md](SUPPLY_CHAIN.md) for sources, attribution and exact pins.
+and [SUPPLY_CHAIN.md](docs/dev/SUPPLY_CHAIN.md) for sources, attribution and exact pins.
 Original LiveArea art is in `assets/`; the UI raster font includes its license.
 Spotify Soloist and third-party drivers/providers are obtained independently.
 
-Maintainer publication checklist: [PUBLISHING.md](PUBLISHING.md).
+Maintainers: release assets come from the tagged CI build, with source-commit
+and run metadata. Review the CI-created draft before publishing.
+
+Maintainers: [publication checklist](docs/dev/PUBLISHING.md) and
+[checks performed / hardware limits](docs/dev/BUILD_VALIDATION.md).

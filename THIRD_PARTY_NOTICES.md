@@ -38,7 +38,7 @@ Opus 1.6.1 source; it no longer uses an Opus-bundling Python wheel. Opus BSD,
 Zig MIT and MinGW-w64 ZPL notices are included in pc/native/licenses. The native
 Soloist process-capture helper uses the same toolchain and original project C
 source under the project's MIT license. Windows API import libraries reference
-OS-provided components. See SUPPLY_CHAIN.md for both build recipes.
+OS-provided components. See [supply-chain inputs](docs/dev/SUPPLY_CHAIN.md) for both build recipes.
 
 VB-CABLE is a separately installed third-party virtual audio driver. No driver
 or vendor installer is bundled. Download and licensing: https://vb-audio.com/Cable/ .

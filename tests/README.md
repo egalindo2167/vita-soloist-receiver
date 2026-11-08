@@ -47,7 +47,7 @@ executables/DLLs do not. A populated favorites template must fail before replaci
 an existing release archive. The Windows/GitHub-copy path calls the native test
 script through bash, without relying on an executable mode bit.
 
-## Release 1.3 additions
+## Release 1.3.1 additions
 
 Search tests cover the all-available queue request, the documented 80-entry
 window, a 5,000-entry synthetic index, the 10,000-entry safety cap, normalization,
@@ -300,3 +300,11 @@ The workflow includes a Windows job using the actual bundled encoder DLL. The
 initial Windows log and subsequent fixture corrections are described above;
 the new download-fix run remains to be verified. Windows capture, Vita touch
 input and sustained variable-network Auto behavior remain physical-device checks.
+
+## CI test deadlines
+
+`python -u -W error::ResourceWarning tools/run_python_tests.py` discovers the
+whole Python suite. Each test has a 120-second hard deadline; expiration names
+the test, dumps all thread stacks and fails the process. Native CI creates both
+libopus.so.0 with its matching SONAME and libopus.so for ctypes discovery on
+fresh runners. Fixed-length TLS fixture reads reject early EOF.

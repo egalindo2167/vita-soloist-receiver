@@ -23,7 +23,7 @@ import soloist_bridge as bridge
 import opus_audio
 import send_audio
 import secure_host
-from security_support import pairing,tls_client
+from security_support import pairing,tls_client,read_exact
 
 def report(buffer=200,remote=1,received=0,playing=1):
     return Report(320,0,buffer,10,playing,remote,320,received)
@@ -207,8 +207,7 @@ class NetworkIntegrationTests(unittest.TestCase):
                 try:
                     self.assertTrue(ready.wait(2))
                     with tls_client(addresses[0],identity,key) as client:
-                        header=bytearray()
-                        while len(header)<16:header.extend(client.recv(16-len(header)))
+                        header=read_exact(client,16)
                         client.sendall(struct.pack('<4sI',b'VPOK',48000));client.setblocking(False)
                         start=last=next_report=time.monotonic();pending=bytearray()
                         while time.monotonic()-start<4.1:
@@ -263,8 +262,7 @@ class NetworkIntegrationTests(unittest.TestCase):
                 try:
                     self.assertTrue(ready.wait(2))
                     with tls_client(addresses[0],identity,key) as client:
-                        header=bytearray()
-                        while len(header)<16:header.extend(client.recv(16-len(header)))
+                        header=read_exact(client,16)
                         self.assertEqual(bytes(header),opus_audio.header(320));client.sendall(struct.pack('<4sI',b'VPOK',48000))
                         while data:=client.recv(8192):wire.extend(data)
                 finally:stop.set();worker.join(4)

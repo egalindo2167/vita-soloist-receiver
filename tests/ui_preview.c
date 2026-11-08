@@ -68,9 +68,11 @@ int main(int argc, char **argv) {
     }
     uint32_t *pixels=calloc(UI_WIDTH*UI_HEIGHT,sizeof(*pixels));
     if (!pixels) return 1;
+    int disconnecting=argc>1 && !strcmp(argv[1],"disconnect");
     int searching=argc>1 && !strncmp(argv[1],"search",6);
-    if (argc>1 && (searching || !strcmp(argv[1],"player") || !strcmp(argv[1],"dim") || !strcmp(argv[1],"black") || !strcmp(argv[1],"browser") || !strcmp(argv[1],"paused") || !strcmp(argv[1],"favorites"))) {
+    if (argc>1 && (searching || disconnecting || !strcmp(argv[1],"player") || !strcmp(argv[1],"dim") || !strcmp(argv[1],"black") || !strcmp(argv[1],"browser") || !strcmp(argv[1],"paused") || !strcmp(argv[1],"favorites"))) {
         spotify.online=spotify.api_online=spotify.logged_in=spotify.active=1;
+        spotify.disconnect_confirm=disconnecting;
         spotify.status=!strcmp(argv[1],"paused")?2:1; spotify.volume=65; spotify.shuffle=1;
         spotify.duration_ms=210000; spotify.position_ms=45000;
         snprintf(spotify.title,sizeof(spotify.title),"Midnight Current");

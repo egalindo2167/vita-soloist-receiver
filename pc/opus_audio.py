@@ -16,8 +16,8 @@ def header(bitrate=320):
     if bitrate not in BITRATES:raise ValueError('Opus bitrate must be 96, 128, 160, 192, 256 or 320 kbps')
     return struct.pack('<4sIHHI',b'VOPS',RATE,2,FRAMES,bitrate*1000)
 
-# Built from the hash-pinned upstream Opus 1.6.1 release; see SUPPLY_CHAIN.md.
-OPUS_DLL_SHA256='b60905db3ed1a2b9f33be9d5c74ceb233d53f1dab5ababe27f683604e52389ff'
+# Built from the hash-pinned upstream Opus 1.6.1 release; see docs/dev/SUPPLY_CHAIN.md.
+from native_hashes import OPUS_DLL_SHA256
 
 def library():
     if sys.platform=='win32':

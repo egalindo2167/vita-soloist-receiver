@@ -20,7 +20,7 @@ typedef struct {
     uint32_t queue_paged,queue_request_id,queue_revision,queue_offset,queue_total,queue_available,queue_flags;
     uint32_t queue_loading,queue_wanted_offset,queue_select_last;
     char queue_query[128];
-    uint32_t queue_confirm,confirm_distance,jump_done,jump_total;
+    uint32_t queue_confirm,confirm_distance,jump_done,jump_total,disconnect_confirm;
     char confirm_token[128],confirm_title[128];
     SearchKeyboard keyboard;
     ControlItem queue[CTL_ITEMS], favorites[CTL_ITEMS];

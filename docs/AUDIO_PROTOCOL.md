@@ -1,4 +1,4 @@
-# Paired audio/control link 1.3
+# Paired audio/control link 1.3.1
 
 Audio stays on TCP 48152 at the PC host. Discovery and control ports do not
 change. All multi-byte wire integers are little endian. PCM is stereo signed
@@ -78,7 +78,7 @@ The protocol is unchanged by screen blanking. Opus is a lossy network transport;
 the header's bitrate is not a report of Spotify's source quality. TCP/IP, Wi-Fi,
 TLS, control/artwork and one-time startup overhead are outside the quoted audio rate.
 Restrict firewall scope; optional raw TCP tunnels or a personal VPN can carry
-remote connections. See SECURITY.md and TUNNEL_SETUP.md.
+remote connections. See [security](../SECURITY.md) and [Funnel setup](../FUNNEL_SETUP.md).
 
 ## Pairing file and discovery
 
@@ -183,14 +183,14 @@ continues to identify decoded bits/sec. TCP may split a batch into multiple segm
 
 Capacity is 96 output blocks (2048 ms); Remote prebuffer is 48 (1024 ms), Local
 12 (256 ms). Receiver-driven pacing can deliver captured backlog up to 4x while
-keeping normal-speed playback and a bounded window. See NETWORK_TUNING.md.
+keeping normal-speed playback and a bounded window. See [network tuning](NETWORK_TUNING.md).
 
 ## Control capabilities and audio reset — 1.1
 
 RSTA supports 16-, 24- and 28-byte payloads. All start with uint32 underruns,
 buffer_ms, seconds and playing. The 24-byte form adds actual kbps and remote.
 The 28-byte form appends capability bits: bit 0 supports AFLU; bit 1 supports
-queue-selection tokens; bit 2 supports 1.3 paged search/progress. New receivers send 28 bytes immediately after connection,
+queue-selection tokens; bit 2 supports 1.3.1 paged search/progress. New receivers send 28 bytes immediately after connection,
 then every five seconds. Unknown capability bits are ignored. Audio pacing uses
 VAQ2 on the audio connection, not this lower-frequency diagnostic channel.
 
@@ -216,7 +216,7 @@ of 32-item snapshots competing with the reset/control traffic on a poor link.
 Remote artwork remains around 8 KiB/s; Local around 80 KiB/s. The same TLS roles,
 USB credential, rotating identity, SNI and discovery formats remain in use.
 
-## Paged upcoming-song search — 1.3
+## Paged upcoming-song search — 1.3.1
 
 The host requests all available Soloist entries with get_queue(limit=0), indexes
 at most 10,000 entries and rejects upstream events over 16 MiB. This removes our

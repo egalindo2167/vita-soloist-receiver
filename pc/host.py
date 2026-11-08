@@ -124,10 +124,12 @@ def setup(autostart=False,codec='opus',bitrate=320):
     print('Next, run Pair Vita.cmd once and copy its pairing file to the Vita with USB.')
     start_background()
 
-def upgrade(codec='opus',bitrate=320):
+def upgrade(codec=None,bitrate=None):
     """Upgrade an installed host without asking for its key or pairing again."""
     security.require_tls()
     value=load_config();windows.unprotect_key(value['key_dpapi'])
+    codec=value.get('audio_codec','opus') if codec is None else codec
+    bitrate=value.get('opus_bitrate',320) if bitrate is None else bitrate
     windows.pythonw_path();validate_audio(codec,bitrate)
     stop_running();application=install_files()
     executable=Path(value['soloist_exe'])
@@ -135,7 +137,7 @@ def upgrade(codec='opus',bitrate=320):
     value.update(app_dir=str(application),audio_codec=codec,opus_bitrate=bitrate)
     save_config(value)
     if sys.platform=='win32' and windows.startup_shortcut().exists():windows.install_startup(application/'host.py')
-    print('Security enabled. Versions before 0.10 require one-time USB pairing: run Pair Vita.cmd.')
+    print('Existing device pairing is retained. Use Pair Vita.cmd only for a new or replacement device.')
     print(f'Host upgraded. Audio link: {codec.upper()}'+(f' {bitrate} kbps CBR.' if codec=='opus' else '.'))
     start_background()
 
@@ -313,14 +315,14 @@ def main(argv=None):
     action.add_argument('--network-scope',choices=('auto','both','remote'))
     action.add_argument('--revoke-vita',metavar='DEVICE_ID')
     parser.add_argument('--install-startup',action='store_true')
-    parser.add_argument('--codec',choices=('opus','pcm'),default='opus',help='Setup/upgrade audio link codec')
-    parser.add_argument('--bitrate',type=int,choices=(96,128,160,192,256,320),default=320,help='Opus bitrate in kbps')
+    parser.add_argument('--codec',choices=('opus','pcm'),help='Override setup/upgrade codec; upgrades normally keep the saved value')
+    parser.add_argument('--bitrate',type=int,choices=(96,128,160,192,256,320),help='Override Opus bitrate; upgrades normally keep the saved value')
     args=parser.parse_args(argv)
     try:
         if sys.platform!='win32':raise RuntimeError('This persistent host is for Windows.')
-        if args.setup:setup(args.install_startup,args.codec,args.bitrate)
+        if args.setup:setup(args.install_startup,args.codec or 'opus',args.bitrate or 320)
         elif args.upgrade:upgrade(args.codec,args.bitrate)
-        elif args.audio_codec:set_audio(args.audio_codec,args.bitrate)
+        elif args.audio_codec:set_audio(args.audio_codec,args.bitrate or 320)
         elif args.network_scope:set_network(args.network_scope)
         elif args.run:return run_host()
         elif args.start:start_background()

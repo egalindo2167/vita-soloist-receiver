@@ -1,4 +1,4 @@
-# Search upcoming songs — version 1.3
+# Search upcoming songs — version 1.3.1
 
 ## What Soloist actually exposes
 
@@ -18,7 +18,7 @@ entries beyond Soloist's reply. Shorter lists, unavailable entries and different
 Soloist builds can produce different counts.
 
 The old app's 32-song limit was our display/message limit. That limit is removed
-for 1.3 clients: five rows are sent at a time, with search/indexing on the PC.
+for 1.3.1 clients: five rows are sent at a time, with search/indexing on the PC.
 Old receivers keep their legacy 32-row messages. Favorites still support 32
 shortcuts; this release does not change favorites editing.
 
@@ -28,7 +28,7 @@ measure what your installed Soloist build actually returns.
 
 ## Update and use
 
-1. Close the Vita app. Extract the complete 1.3 ZIP and run **pc/Upgrade Host.cmd**.
+1. Close the Vita app. Extract the complete 1.3.1 ZIP and run **pc/Upgrade Host.cmd**.
    Keep your current Soloist login/key, cable routing, pairing and Funnel profile.
 2. Install **dist/vita-audio-receiver.vpk** over the existing Vita app. Keep its
    saved data. Update both ends for search; no new pairing is required.
@@ -83,7 +83,11 @@ It never falls back to `play(uri)`, which would replace the playback context.
 Selections over eight skips away show confirmation first. Once started, a
 progress screen shows confirmed skips. X, Circle or the touch Cancel stops
 future skips; a command already dispatched may finish. Skips already completed
-cannot be undone. Audio is held during the jump so intermediate songs are not
+cannot be undone. These are real Spotify skip commands: depending on upstream
+account rules, long jumps may consume skip allowances and may affect recent
+activity/history. The app does not guarantee how Spotify records skipped songs.
+Account restrictions can interrupt a jump; use Spotify on a phone/PC for distant
+selections when that matters. Audio is held during the jump so intermediate songs are not
 played to the Vita, then starts from the resulting song with a fresh buffer.
 
 The host rejects targets over 256 skips away before sending anything, allows
@@ -134,7 +138,7 @@ Automated tests exercised a real local WebSocket/paired TLS fixture with 5,000
 cancellation, normalization, paging and stale/malformed replies. Those results
 verify the app's own limits and transport, not Spotify returning 5,000 tracks.
 Physical Vita touch/keyboard behavior and a live Soloist account still need
-checking on your setup. See BUILD_VALIDATION.md and tests/README.md.
+checking on your setup. See [build verification](docs/dev/BUILD_VALIDATION.md) and [test notes](tests/README.md).
 
 Full large-playlist browsing/search would need another source, such as Spotify
 Web API playlist access with its own authorization and availability constraints.

@@ -1,72 +1,76 @@
-# Windows host setup — 1.3
+# Windows host setup
 
-The PC waits in the background. The paired Vita initiates encrypted audio and
-Spotify controls. This requires Windows 11 x64 (build 20348+) and Python **3.14** with TLS-PSK
-support (introduced in Python 3.13). The scripts explicitly select 3.14. An older
-Python fails with instructions instead of falling back to unencrypted transport.
-
-## Existing working host
-
-For 1.3, update both the Windows host and VPK to enable upcoming-song search.
-Extract the complete new ZIP and run Upgrade Host; keep existing saved data.
-
-For an existing 1.0 host, your cable and route verification are already saved.
-Upgrade Host retains them; audio setup does not need repeating unless the device
-or Soloist output route changes. Install the new VPK too. See NETWORK_TUNING.md.
-
-1. Install VB-CABLE from https://vb-audio.com/Cable/ and restart Windows. Keep your
-   physical speakers/headphones as the Windows default. See AUDIO_SETUP.md.
-   Close the Vita application and extract this ZIP.
-2. Run **pc/Upgrade Host.cmd**. Your protected Soloist key, account/session,
-   favorites, quality/network settings and installed sign-in shortcut stay in place.
-   No Soloist key prompt. The audio wizard then asks for a virtual cable and opens
-   Windows Volume mixer: route only Soloist to CABLE Input and verify it. Use
-   **Setup Audio.cmd** to reopen this wizard. See **AUDIO_SETUP.md** for every step.
-3. Install **dist/vita-audio-receiver.vpk** over the existing Vita app.
-4. If upgrading from before 0.10 or the pairing file is missing, run
-   **pc/Pair Vita.cmd** once and complete the USB pairing below. Transport
-   pairing is separate from Spotify Connect account pairing.
-
-For upgrades from 0.10 or newer, keep the existing pairing file and registry; do not
-repeat Pair Vita unless adding a device or replacing a revoked/lost credential.
+Start here for a new PC and Vita. Use **Windows 11 x64**, standard 64-bit
+**Python 3.14**, your own official Soloist download/API key and a virtual cable.
+The PC stays awake and signed in while listening. Native Windows ARM Python is
+unsupported; Windows-on-ARM x64 emulation is untested.
 
 ## First setup on a new PC
 
-1. Install VB-CABLE and restart Windows, then install 64-bit Python 3.14 from the official Python distribution. Use
-   `py -3.14 --version` to confirm the interpreter.
-2. Obtain your own Soloist API key and official Windows x86_64 Soloist download:
-   https://developer.spotify.com/dashboard/soloist
-   https://developer.spotify.com/documentation/soloist/reference/downloads-and-updates
-3. Extract the Soloist archive inside **pc/soloist/**. Keep soloist.exe and its
-   companion files together; one enclosing archive directory is supported.
-4. Double-click **pc/Setup Host.cmd**. It installs the PC audio/control/Opus
-   dependencies, asks for your personal Soloist key once at a hidden prompt,
-   protects it with Windows DPAPI, installs the host and adds current-user
-   sign-in startup. Blank key input on subsequent setup keeps the saved key. It
-   then opens the dedicated-cable wizard. Route only Soloist to CABLE Input in
-   Windows Volume mixer and complete its live verification (AUDIO_SETUP.md).
-5. Install the VPK and complete the following one-time device pairing.
+1. Download the complete application ZIP from this repository's **Releases**,
+   not the automatic Source code archive or just the VPK. If you trust this
+   expected release, right-click the ZIP → **Properties → Unblock → Apply**
+   when that option appears, then **Extract All** to a normal local folder.
+   This removes the download flag; it does not code-sign the app. See
+   [Windows troubleshooting](docs/WINDOWS_TROUBLESHOOTING.md) for security blocks.
+2. Put the PC and Vita on the same trusted home network for initial setup.
+   On that trusted network only, open **Settings → Network & internet → Wi-Fi →
+   your connected network → Network profile type → Private**. For Ethernet,
+   choose its connected network's properties. Keep shared/public Wi-Fi Public.
+3. Install [VB-CABLE](https://vb-audio.com/Cable/) and restart Windows as its
+   installer directs. Keep your headphones/speakers as the Windows default.
+   Our scripts run as your normal user. [AUDIO_SETUP.md](AUDIO_SETUP.md) explains
+   the dedicated cable and Windows Volume mixer routing in detail.
+4. Install the **standard x64 Python 3.14 runtime** using the
+   [python.org installer or Python install manager](https://www.python.org/downloads/windows/).
+   The classic installer must include its Python launcher. With the install
+   manager, `py install 3.14` installs the standard runtime. Do not choose
+   **3.14t/free-threaded**, 32-bit or ARM64 Python. Confirm `py -3.14 --version`
+   works. Setup also checks the ABI, architecture and TLS-PSK before pip runs.
+5. Obtain your own [Soloist API key](https://developer.spotify.com/dashboard/soloist)
+   and [official Windows x86_64 Soloist download](https://developer.spotify.com/documentation/soloist/reference/downloads-and-updates).
+   Follow Spotify's current account/access requirements. Extract Soloist into
+   **pc/soloist/** in this package, keeping soloist.exe and its companion files
+   together. One enclosing archive folder is supported.
+6. Double-click **pc/Setup Host.cmd**. It checks Python, installs hash-locked
+   packages, asks for your Soloist key at a hidden prompt, protects it with
+   Windows DPAPI, installs the host and adds current-user sign-in startup.
+   If Windows asks to allow Python through the firewall, allow **Private
+   networks only**, not Public. If necessary use Windows Security → Firewall &
+   network protection → Allow an app through firewall to check those scopes.
+   Keep the firewall enabled. See the troubleshooting link above for blocks.
+7. Complete the audio wizard: choose **CABLE Input (VB-Audio Virtual Cable)**,
+   select **PS Vita (PC bridge)** in Spotify on your phone/PC and start a song
+   so Soloist appears in Windows Volume mixer. Route **only Soloist** to that
+   exact cable at 100%, unmuted. Leave other apps at Default. Return to the
+   wizard and press Enter to verify. See AUDIO_SETUP.md if two cable inputs
+   appear or the route check fails. **Setup Audio.cmd** reopens the wizard.
+8. Install **dist/vita-audio-receiver.vpk** on the Vita with VitaShell. Open the
+   app once; it creates **ux0:data/vita-audio-receiver/** and shows its pairing
+   instructions. Close it, then open VitaShell for the USB copy below.
+9. Double-click **pc/Pair Vita.cmd**. Its new per-device folder opens with a
+   private **vita-pairing.bin**. Copy that file by trusted USB into the Vita's
+   **ux0:data/vita-audio-receiver/** folder. From the PC, the USB drive is ux0:
+   use `data/vita-audio-receiver/`, not an extra `ux0` folder within the drive.
+10. Close VitaShell and open Vita Audio Receiver. It discovers the paired PC
+    and establishes encrypted audio/control sessions. If needed, choose
+    **PS Vita (PC bridge)** in Spotify's device picker again. Spotify remembers
+    that account; USB transport pairing is a separate step.
 
-## Pair a Vita once using USB
+After the first authenticated connection, the matching PC pairing export is
+removed automatically; keep the Vita file and protected PC registry. Each Vita
+needs its own generated credential. Never share keys, account folders or pairing
+files. One Vita audio/control session is served at a time. Daily use is simply
+opening the Vita app while the Windows host waits in the background.
 
-1. Double-click **Pair Vita.cmd**. A new random per-device credential is saved as
-   `%LOCALAPPDATA%\VitaAudioReceiver\pairing\DEVICE_ID\vita-pairing.bin` and its folder opens.
-2. On the Vita, open VitaShell and enable USB. Copy **vita-pairing.bin** into
-   **ux0:data/vita-audio-receiver/**. Create that directory if it does not exist.
-   From the PC, the USB drive is ux0, so copy into its `data/vita-audio-receiver/`
-   folder, not an extra `ux0` folder inside the drive.
-3. Close and reopen Vita Audio Receiver. It automatically finds its paired host
-   on the same network and establishes TLS 1.3 connections.
-4. The first authenticated connection automatically deletes the matching PC
-   export. Keep the Vita's copy and protected PC registry. Do not share/upload them.
-5. If Soloist has never signed into Spotify, open Spotify on phone/PC and select
-   **PS Vita (PC bridge)** in the device picker. The account is remembered.
+## Updating to a newer release
 
-The file is a secret like a password, not a Soloist API key or Spotify token.
-Use trusted USB provisioning, not unauthenticated public-network FTP. Each Vita
-needs a different generated file. Re-running Pair Vita creates another device;
-it does not revoke earlier ones automatically. One audio/control session is
-served at a time. Keep your PC awake and signed in; the host cannot wake it.
+Close the Vita app. Extract the new complete release ZIP, run **pc/Upgrade Host.cmd**,
+then install its **dist/vita-audio-receiver.vpk** over the existing Vita app.
+Keep saved data. The upgrade preserves your codec/bitrate, key/login, cable
+route, pairing, favorites, sign-in startup and Funnel profile. Re-pair only a
+new/replacement device or a lost/revoked credential. Run Setup Audio only if
+routing/device verification is missing or has changed.
 
 ## Network exposure and quality
 
@@ -84,7 +88,7 @@ always loopback, independent of this setting. These helpers restart the host.
 
 Use **gear → Audio quality** on the Vita for live Local/Remote fixed rates or Auto. Preferences
 are saved there; see [QUALITY.md](QUALITY.md). This changes the Opus link, not
-Spotify's source quality. Existing 0.10–0.12 USB pairing files remain valid.
+Spotify's source quality. Saved USB pairing files remain valid during ordinary updates.
 
 ## Optional remote TCP tunnels
 
@@ -93,7 +97,7 @@ follow [FUNNEL_SETUP.md](FUNNEL_SETUP.md). Tailscale runs on the PC only; Setup
 Funnel.cmd selects two managed raw TCP routes and preserves your Opus preferences.
 Your Soloist key and private transport pairing stay unchanged. Triangle on the
 Vita waiting screen switches Local/Remote; gear → PC connection shows Remote details. The
-previous ngrok option remains in [TUNNEL_SETUP.md](TUNNEL_SETUP.md). Select one
+previous ngrok option remains in [advanced ngrok setup](docs/advanced/NGROK_SETUP.md). Select one
 managed provider at a time; there is no automatic fallback.
 
 ## Revocation and replacing a device
@@ -141,7 +145,7 @@ reconnect does not deliberately pause it.
 
 X play/pause, L/R previous/next, Left/Right Spotify volume, Up/Down seek ten
 seconds, Square shuffle (Queue: search), SELECT Settings, Triangle cycles Now playing/Queue/
-Favorites, Circle back/disconnect, START exit. Repeat uses its icon. L/R skips
+Favorites, Circle back/confirm disconnect, START exit. Repeat uses its icon. L/R skips
 tracks in both browsers; D-pad Left/Right switches those tabs. Touch icons,
 progress/volume sliders and sidebar tabs also work. Gear → PC connection edits
 the PC address; Square tests speakers while disconnected. See UI_GUIDE.md.
@@ -211,4 +215,4 @@ The old unencrypted sender and manual Soloist launcher are retired.
 
 See tests/README.md for verification and physical Windows/Vita testing limits.
 
-Favorites walkthrough: FAVORITES.md. Review and network changes: REVIEW_1.1.md.
+Favorites walkthrough: [FAVORITES.md](FAVORITES.md). Network diagnostics: [network tuning](docs/NETWORK_TUNING.md).

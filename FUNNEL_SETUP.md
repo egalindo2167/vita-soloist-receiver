@@ -1,4 +1,4 @@
-# Remote access with Tailscale Funnel — receiver 1.3
+# Remote access with Tailscale Funnel — receiver 1.3.1
 
 Keep **Opus 320 kbps**, or choose a lower fixed rate/Auto on the Vita, and use it from a different
 network. Tailscale runs on the Windows PC only. The Vita uses the public Funnel
@@ -7,21 +7,16 @@ PC awake, connected to the internet and signed into Windows.
 
 Funnel forwards two raw TCP connections. The app still authenticates both ends
 with the existing USB pairing secret and encrypts audio, controls, titles and
-artwork with TLS 1.3 PSK-DHE. Receiver 1.1 retains the TLS hostname (SNI) required
+artwork with TLS 1.3 PSK-DHE. The receiver sends the TLS hostname (SNI) required
 for Funnel routing. Install the new VPK and host together; rotating identities require the new host. A browser HTTPS
 test is not a valid playback/authentication test for these PSK endpoints.
 
-## 1. Update the two apps
+## 1. Complete local setup first
 
-1. Close Vita Audio Receiver and extract the 1.3 ZIP into a new PC folder.
-2. Run **pc/Upgrade Host.cmd**. It updates/restarts the installed Windows host,
-   installs required Opus dependencies and selects Opus **320 kbps**. It keeps
-   your Soloist login/key, transport pairing, favorites and existing sign-in startup.
-3. Transfer **dist/vita-audio-receiver.vpk** to the Vita and install it with
-   VitaShell over the current app. Do not delete the app or its data first.
-4. Keep your existing **ux0:data/vita-audio-receiver/vita-pairing.bin**.
-   Existing users of 0.10 or later do not need to run Pair Vita again. For a
-   first-time host or missing pairing file, complete [HOST_SETUP.md](HOST_SETUP.md).
+Follow [HOST_SETUP.md](HOST_SETUP.md) and verify audio/controls on the same
+trusted home network. Keep the paired Vita file and saved host setup. Do not
+create another pairing just to enable remote access. If updating both apps,
+use the short update section in HOST_SETUP.md first.
 
 ## 2. Install and connect Tailscale on the PC
 
@@ -41,7 +36,7 @@ The helper requires the current CLI syntax (Tailscale 1.52 or newer).
 
 ## 3. Enable Funnel once
 
-1. Double-click **pc/Setup Funnel.cmd** in the extracted 1.3 folder.
+1. Double-click **pc/Setup Funnel.cmd** in the extracted 1.3.1 folder.
 2. Read its console output. If it prints a Tailscale authorization URL, open
    that URL on your PC, sign in if asked, and approve enabling Funnel/HTTPS.
    Setup allows up to ten minutes for this first approval. Do not close the
@@ -142,7 +137,7 @@ The Funnel DNS hostname/SNI is public routing metadata, not a password. Public
 certificate names may also appear in Certificate Transparency if certificates
 are issued for that name. Do not rely on a secret hostname for security. The
 app requires the pairing proof, but public flooding can still disrupt service.
-The 0.13 bounded concurrent handshake path mitigates simple serial blocking and
+The bounded concurrent handshake path mitigates simple serial blocking and
 shared-loopback rate starvation; it is not a DDoS-protection service.
 
 ## Daily use and controls
@@ -169,7 +164,7 @@ termination removes that session's route; no persistent `--bg` route is left.
 Windows uses a kill-on-close job for only these spawned CLI processes, never
 the global Tailscale service. Unrelated Serve/Funnel routes remain intact.
 
-ngrok remains an optional explicit alternative in [TUNNEL_SETUP.md](TUNNEL_SETUP.md).
+ngrok remains an optional explicit alternative in [advanced ngrok setup](docs/advanced/NGROK_SETUP.md).
 Only one managed provider is selected at a time. There is no automatic fallback.
 
 ## Quality and limits
@@ -217,7 +212,7 @@ The automated checks cover the exact Vita TLS client behind an SNI-routing
 test relay, PSK rejection, real audio/control transport, the official CLI flags,
 and helper lifecycle/config conflicts with a local CLI fixture. A live
 Tailscale account, Windows audio capture and physical Vita are still needed
-for the end-to-end checks above. See [BUILD_VALIDATION.md](BUILD_VALIDATION.md).
+for the end-to-end checks above. See [BUILD_VALIDATION.md](docs/dev/BUILD_VALIDATION.md).
 
-Version 1.1 network recovery/batching/buffering details: NETWORK_TUNING.md.
+Network recovery/batching/buffering details: [network tuning](docs/NETWORK_TUNING.md).
 The existing Funnel routes and profile need no changes for this update.

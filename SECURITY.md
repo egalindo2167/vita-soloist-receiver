@@ -1,4 +1,4 @@
-# Security model — version 1.3
+# Security model — version 1.3.1
 
 ## Reporting a vulnerability
 
@@ -154,7 +154,7 @@ that child to exit. Other agents are not killed or reconfigured. Tunnel setup
 creates no router mapping or Public firewall exception. The provider account,
 its network metadata, quotas and endpoint availability remain external trust/
 operational dependencies. The app is still not an independently audited public
-internet service. See FUNNEL_SETUP.md or TUNNEL_SETUP.md for required account/device testing.
+internet service. See [Funnel setup](FUNNEL_SETUP.md) or [advanced ngrok setup](docs/advanced/NGROK_SETUP.md) for required account/device testing.
 
 ## Public Wi-Fi and remote use
 
@@ -240,7 +240,7 @@ Setup/Upgrade use exact hashed wheel locks. The third-party Opus wrapper/wheel
 is removed; the Windows encoder DLL is built from pinned upstream source and
 hash checked before loading. SDK/actions are pinned, with checksum generation
 and Windows/native test jobs. These controls make inputs reviewable; they do
-not replace an audit, signatures or Windows-user isolation. See SUPPLY_CHAIN.md.
+not replace an audit, signatures or Windows-user isolation. See [supply-chain inputs](docs/dev/SUPPLY_CHAIN.md).
 
 ## Version 1.1 control and pacing
 
@@ -249,4 +249,4 @@ markers stay inside authenticated role-bound TLS connections. Sizes, counts,
 flag values, counter progress and pacing windows are bounded. Unknown/stale queue
 selections are rejected, and reset markers do not change pairing or network scope.
 The audio-only reset discards old socket and capture buffers; it does not create
-a plaintext path or a new inbound Vita service. See NETWORK_TUNING.md.
+a plaintext path or a new inbound Vita service. See [network tuning](docs/NETWORK_TUNING.md).

@@ -40,5 +40,14 @@ def package(root,output):
     output.with_suffix(output.suffix+'.sha256').write_text(text);print(text,end='')
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('output',type=Path)
-    parser.add_argument('--root',type=Path,default=Path(__file__).resolve().parents[1]);args=parser.parse_args();package(args.root,args.output)
+    from release_metadata import version,write_info
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('output',type=Path,nargs='?')
+    parser.add_argument('--release-dir',type=Path);parser.add_argument('--source-commit');parser.add_argument('--run-url')
+    parser.add_argument('--root',type=Path,default=Path(__file__).resolve().parents[1]);args=parser.parse_args()
+    if (args.output is None)==(args.release_dir is None):parser.error('Choose one output path or --release-dir')
+    output=args.output if args.output is not None else args.release_dir/('vita-audio-receiver-'+version(args.root)+'.zip')
+    info=write_info(args.root,args.source_commit,args.run_url);package(args.root,output)
+    if args.release_dir is not None:
+        (args.release_dir/'vita-audio-receiver.vpk').write_bytes((args.root/'dist/vita-audio-receiver.vpk').read_bytes())
+        (args.release_dir/'SHA256SUMS.txt').write_text(output.with_suffix(output.suffix+'.sha256').read_text())
+        (args.release_dir/'BUILD_INFO.txt').write_text(info)

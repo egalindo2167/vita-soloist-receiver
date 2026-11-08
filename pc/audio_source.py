@@ -17,7 +17,7 @@ import secure_host
 import windows_host
 from start_soloist import process_options,stop_process
 
-HELPER_SHA256='7849ffbdc907119f552a36878cef88ba5d58e6a2b20d7fd4b050b431b94c8b8f'
+from native_hashes import HELPER_SHA256
 HERE=Path(__file__).resolve().parent
 HEADER=struct.Struct('<4sIII')
 ERRORS={

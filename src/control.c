@@ -105,7 +105,7 @@ static int make_command(Input in, uint8_t *out) {
     unsigned op=0; int value=0; char uri[128]={0};
     sceKernelLockMutex(state_mutex,1,NULL);
     if(shared.volume && shared.volume<=100)previous_volume=shared.volume;
-    if(in.kind==3)shared.keyboard.open=shared.queue_confirm=0;
+    if(in.kind==3)shared.keyboard.open=shared.queue_confirm=shared.disconnect_confirm=0;
     if(shared.keyboard.open) {
         unsigned keys=0;
         if(in.kind==1) {
@@ -123,6 +123,12 @@ static int make_command(Input in, uint8_t *out) {
         }
         unsigned action=search_keyboard_input(&shared.keyboard,keys,in.kind==2 && in.fresh,in.a,in.b);
         if(action==KEYBOARD_SUBMIT)op=search_request(shared.keyboard.text,&value,uri);
+    } else if(shared.disconnect_confirm) {
+        if((in.kind==1 && ((unsigned)in.a&SCE_CTRL_CROSS)) ||
+           (in.kind==2 && in.fresh && ui_hit(UI_CONFIRM_GO,in.a,in.b))) {
+            shared.disconnect_confirm=0;__atomic_store_n(&disconnect_requested,1,__ATOMIC_RELEASE);
+        } else if((in.kind==1 && ((unsigned)in.a&(SCE_CTRL_CIRCLE|SCE_CTRL_TRIANGLE))) ||
+           (in.kind==2 && in.fresh && ui_hit(UI_CONFIRM_CANCEL,in.a,in.b)))shared.disconnect_confirm=0;
     } else if(shared.jump_total) {
         if((in.kind==1 && ((unsigned)in.a&(SCE_CTRL_CIRCLE|SCE_CTRL_CROSS))) ||
            (in.kind==2 && in.fresh && ui_hit(UI_CONFIRM_CANCEL,in.a,in.b)))op=CTL_QUEUE_CANCEL;
@@ -173,7 +179,7 @@ static int make_command(Input in, uint8_t *out) {
             else if (b&SCE_CTRL_RIGHT) { op=CTL_VOLUME_DELTA; value=5; }
             else if (b&SCE_CTRL_UP) { op=CTL_SEEK_DELTA; value=10000; }
             else if (b&SCE_CTRL_DOWN) { op=CTL_SEEK_DELTA; value=-10000; }
-            else if (b&SCE_CTRL_CIRCLE) __atomic_store_n(&disconnect_requested,1,__ATOMIC_RELEASE);
+            else if (b&SCE_CTRL_CIRCLE) shared.disconnect_confirm=1;
         }
     } else if (in.kind==2) {
         int x=in.a,y=in.b;
@@ -234,7 +240,7 @@ static void lost(void) {
     __atomic_store_n(&online,0,__ATOMIC_RELEASE);
     sceKernelLockMutex(state_mutex,1,NULL);
     shared.online=0; shared.browser=0; ++shared.generation;
-    shared.keyboard.open=shared.queue_confirm=shared.jump_total=0;
+    shared.keyboard.open=shared.queue_confirm=shared.jump_total=shared.disconnect_confirm=0;
     shared.queue_paged=shared.queue_request_id=shared.queue_revision=shared.queue_loading=0;
     shared.queue_offset=shared.queue_total=shared.queue_available=shared.queue_count=0;shared.queue_query[0]=0;
     sceKernelUnlockMutex(state_mutex,1);

@@ -34,3 +34,13 @@ def tls_client(address,identity,key,role='audio',context=None,private=False,serv
         if data!=b'VSA1':raise OSError('Wrong secure role reply')
         return sock
     except BaseException:(sock or raw).close();raise
+
+
+def read_exact(sock,size):
+    """Reject EOF during a fixed-length handshake instead of spinning forever."""
+    data=bytearray()
+    while len(data)<size:
+        chunk=sock.recv(size-len(data))
+        if not chunk:raise EOFError(f'Connection closed after {len(data)} of {size} required bytes')
+        data.extend(chunk)
+    return bytes(data)

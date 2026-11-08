@@ -196,6 +196,13 @@ static void queue_action_frame(uint32_t *p,const ReceiverUiState *audio,const Sp
     }
     ud_round(p,UI_CONFIRM_CANCEL,28,SELECTED);label(p,295,365,UF_LABEL,GREEN,active?"O / X · Cancel":"O · Back",240);
 }
+static void disconnect_frame(uint32_t *p,const ReceiverUiState *audio,const SpotifyView *s) {
+    shell(p,audio,0,s,"Disconnect from your PC?","Audio will stop on this Vita. Your PC host will stay ready to reconnect.",0);
+    label(p,204,185,UF_TITLE,INK,"Keep listening?",700);
+    label(p,204,242,UF_BODY,SOFT,"Press Circle to return, or X to disconnect.",700);
+    ud_round(p,UI_CONFIRM_CANCEL,28,SELECTED);label(p,295,365,UF_LABEL,GREEN,"O · Back",240);
+    ud_round(p,UI_CONFIRM_GO,28,GREEN);label(p,650,365,UF_LABEL,BG,"X · Disconnect",270);
+}
 static void quality_frame(uint32_t *p,const ReceiverUiState *s) {
     shell(p,s,-1,NULL,"Settings / Audio","Separate preferences for Local and Remote. Changes apply during playback.",1);
     UiRect tabs[]={UI_QUALITY_LOCAL,UI_QUALITY_REMOTE};
@@ -306,6 +313,7 @@ void ui_render_player(uint32_t *p,const ReceiverUiState *audio,const char *ip,co
     if(audio->link.editing) { connection_frame(p,audio,ip);return; }
     if(audio->capture_error && !audio->testing) { capture_frame(p,audio);return; }
     if(!s->online) { ui_render_frame(p,audio,ip);return; }
+    if(s->disconnect_confirm) { disconnect_frame(p,audio,s);return; }
     if(s->keyboard.open) { search_keyboard_frame(p,audio,s);return; }
     if(s->jump_total || s->queue_confirm) { queue_action_frame(p,audio,s);return; }
     if(s->browser) { browser(p,audio,s);return; }

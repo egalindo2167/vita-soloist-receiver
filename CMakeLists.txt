@@ -40,7 +40,7 @@ target_compile_options(receiver PRIVATE -Wall -Wextra)
 target_link_libraries(receiver opus mbedtls mbedx509 mbedcrypto SceAudio_stub SceNet_stub SceNetCtl_stub SceCtrl_stub
  SceDisplay_stub SceSysmem_stub SceSysmodule_stub ScePower_stub SceKernelThreadMgr_stub SceTouch_stub m)
 vita_create_self(eboot.bin receiver UNSAFE)
-vita_create_vpk(vita-audio-receiver.vpk VRXA00001 eboot.bin VERSION 01.17 NAME "Vita Audio Receiver"
+vita_create_vpk(vita-audio-receiver.vpk VRXA00001 eboot.bin VERSION 01.18 NAME "Vita Audio Receiver"
  FILE sce_sys/icon0.png sce_sys/icon0.png
  FILE sce_sys/pic0.png sce_sys/pic0.png
  FILE sce_sys/livearea/contents/bg.png sce_sys/livearea/contents/bg.png

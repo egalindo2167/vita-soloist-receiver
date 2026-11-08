@@ -1,4 +1,4 @@
-# Favorites — version 1.3
+# Favorites — version 1.3.1
 
 Favorites are this app's local shortcuts to Spotify songs, albums, playlists or
 episodes. They are separate from Spotify's Liked Songs/library. Up to 32 shortcuts

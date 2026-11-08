@@ -22,9 +22,10 @@ cc -O2 -shared -fPIC -DSECURE_NET_HOST_TEST -D_POSIX_C_SOURCE=200809L \
 cc -shared -fPIC -O2 src/remote_profile.c -o "$native_dir/remote-profile.so"
 cc -O2 -I"$opus_source/include" tests/opus_stream_test.c src/opus_stream.c \
   "$native_dir/opus/libopus.a" -lm -o "$native_dir/opus-decode"
-cc -shared -Wl,--whole-archive "$native_dir/opus/libopus.a" -Wl,--no-whole-archive -lm -o "$native_dir/libopus.so.0"
+cc -shared -Wl,-soname,libopus.so.0 -Wl,--whole-archive "$native_dir/opus/libopus.a" -Wl,--no-whole-archive -lm -o "$native_dir/libopus.so.0"
+ln -sfn libopus.so.0 "$native_dir/libopus.so"
 export LD_LIBRARY_PATH="$native_dir${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 OPUS_SOURCE="$opus_source" OPUS_LIBRARY="$native_dir/opus/libopus.a" bash tests/run_native.sh
 VITA_TLS_TEST_LIB="$native_dir/vita-tls.so" VITA_REMOTE_TEST_LIB="$native_dir/remote-profile.so" \
 VITA_OPUS_TEST_DECODER="$native_dir/opus-decode" \
-python -W error::ResourceWarning -m unittest discover -s tests -p 'test_*.py' -v
+python -u -W error::ResourceWarning tools/run_python_tests.py

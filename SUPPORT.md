@@ -1,7 +1,7 @@
 # Support and troubleshooting
 
 Start with [HOST_SETUP.md](HOST_SETUP.md) and [AUDIO_SETUP.md](AUDIO_SETUP.md).
-The [user guide](USER_GUIDE.md) covers daily use and limitations. Use the latest
+The [user guide](docs/REFERENCE.md) covers daily use and limitations. Use the latest
 complete application ZIP from Releases, updating both host and Vita when asked.
 
 ## Check before opening an issue
@@ -16,7 +16,7 @@ complete application ZIP from Releases, updating both host and Vita when asked.
    TCP routes and the saved public profile. First test Local if your host is
    intentionally configured to allow LAN access; Remote-only is not a LAN mode.
 5. For hitches, note whether Windows capture discontinuities or Vita rebuffer
-   counts increase. See [NETWORK_TUNING.md](NETWORK_TUNING.md) and [QUALITY.md](QUALITY.md).
+   counts increase. See [NETWORK_TUNING.md](docs/NETWORK_TUNING.md) and [QUALITY.md](QUALITY.md).
 6. For search, check [SEARCH.md](SEARCH.md) and **Queue Availability.cmd**.
    Soloist's available queue window is not the full playlist.
 

@@ -1,46 +1,44 @@
-Vita Audio Host 1.3
+Vita Audio Receiver — Windows host
 
-Run Setup Host.cmd once, or Upgrade Host.cmd to update an existing installation.
-Keep the native folder with the PC files. Setup installs the exact hash-locked
-Windows 11 x64 Python 3.14 dependencies and copies the Opus DLL and process-capture EXE.
-Install VB-CABLE and restart Windows before the first 1.0 upgrade. The audio wizard
-chooses CABLE Input and verifies that only Soloist is routed to it in Volume mixer.
-Leave normal Windows audio on your preferred speakers/headphones.
+FIRST SETUP
+Use Windows 11 x64 and standard x64 Python 3.14 (not 3.14t/free-threaded).
+Extract the complete application ZIP; keep native/ with these scripts.
+Install VB-CABLE and restart Windows. Keep normal speakers/headphones as default.
+Obtain your own official Soloist download/key; extract its files into soloist/.
+Run Setup Host.cmd, then finish its dedicated-cable/Volume mixer wizard.
+Allow the host's Python on Private networks only for trusted home-LAN use.
+See HOST_SETUP.md and AUDIO_SETUP.md in the ZIP root for every step.
+Windows security/launcher blocks: docs/WINDOWS_TROUBLESHOOTING.md.
 
-Setup Audio.cmd changes the dedicated cable; Audio Status.cmd checks the live route.
-The managed stream includes only the owned Soloist process tree, never all PC sounds.
-A missing cable or wrong Soloist route stops capture; there is no speaker fallback.
-Leave cable/Windows Soloist mixer volume at 100%; use the Vita for normal loudness.
-Full one-time instructions: AUDIO_SETUP.md in the ZIP root.
+VITA PAIRING
+Install the VPK from dist/. Open it once to create its data folder, then close.
+Run Pair Vita.cmd and copy the generated private vita-pairing.bin by USB to
+ux0:data/vita-audio-receiver/. Reopen the Vita app. Select PS Vita (PC bridge)
+in Spotify's device picker. Each user supplies their own key/account/pairing.
+Never share a pairing file or an installed host/Spotify account data folder.
 
-The background host waits for the paired Vita. Optional sign-in startup is
-retained. Soloist login, key, favorites and transport pairing are preserved.
-The Soloist key is protected by DPAPI at rest but its required upstream CLI
-argument remains visible to processes/auditing with sufficient Windows access.
+DAILY USE
+The signed-in Windows host waits for the Vita. Open the Vita app to connect.
+Setup Audio.cmd changes/checks routing; Audio Status.cmd checks the live route.
+Only the owned Soloist process tree is captured. A missing cable/wrong route
+stops capture; there is no speaker fallback. Leave the cable and Windows Soloist
+mixer volume at 100%; use Vita/Spotify controls for normal loudness.
+Quality, screen timeout and connection settings are under the Vita gear icon.
 
-Pair Vita.cmd generates a per-device private export. Copy it by trusted USB to
-ux0:data/vita-audio-receiver/vita-pairing.bin. Its matching PC export is deleted
-on first authenticated use. Manage Vitas.cmd revokes a lost device.
+OPTIONAL REMOTE ACCESS
+First get Local working. Setup Funnel.cmd enables Tailscale Funnel on the PC;
+follow FUNNEL_SETUP.md. No Tailscale app is needed on Vita. Automatic mode binds
+only to loopback when a tunnel is enabled. Use Local and Remote.cmd explicitly
+if you also want LAN access. Ngrok is an advanced alternative, not first setup.
 
-Setup Funnel.cmd configures optional remote access. Keep the existing Remote
-profile after upgrading. With a tunnel enabled, Automatic network mode binds
-only to loopback. Use Local and Remote.cmd explicitly enables LAN too.
+UPDATING
+Close the Vita app. From the new release, run Upgrade Host.cmd, then install
+its VPK over the current Vita title. Keep data. Existing codec/bitrate, key,
+login, route, pairing, favorites, startup and Funnel profile are preserved.
+Use Pair Vita only for a new/replacement device or lost/revoked credential.
 
-Open gear > Audio quality on Vita to set separate Local/Remote Opus preferences from 96 to
-320 kbps, or opt into Auto. Both default to 320. Choices apply during playback;
-Use Opus 320.cmd changes the PC codec/default, not saved Vita preferences.
-
-Full instructions: HOST_SETUP.md, FUNNEL_SETUP.md and QUALITY.md in the ZIP root.
-New Vita controls/settings: UI_GUIDE.md. SELECT opens Settings; L/R skips tracks
-in Queue/Favorites; Left/Right switches those tabs; Triangle cycles music pages.
-Current security: SECURITY.md. Review: REVIEW_1.1.md. Build inputs: SUPPLY_CHAIN.md.
-
-1.3 adds upcoming-song search; update BOTH host and VPK for this revision.
-Existing 1.0 cable, pairing, login, quality preferences and Funnel profile stay.
-Up Next selection preserves the queue/context. Favorites commands are unchanged;
-see FAVORITES.md for adding/listing/removing and opening the Vita tab.
-
-In Queue, Square or the search bar opens a touch/controller keyboard. R searches;
-results are paged with their original queue positions. Spotify documents up to
-80 upcoming songs, not the whole playlist. Queue Availability.cmd checks the
-current running build with a read-only request. See SEARCH.md in the ZIP root.
+CONTROLS AND HELP
+UI_GUIDE.md: controls/settings. SEARCH.md: upcoming-song search and its scope.
+FAVORITES.md: add/list/remove song or playlist shortcuts on the PC.
+SUPPORT.md: troubleshooting and redacted bug reports. SECURITY.md: private
+vulnerability reporting. Sign-in startup is optional. Keep the PC awake/signed in.

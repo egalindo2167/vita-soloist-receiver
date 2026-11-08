@@ -68,7 +68,8 @@ int main(void) {
     view->browser=1;view->tab=0;view->queue_paged=1;view->queue_total=view->queue_available=10000;
     view->queue_offset=9995;view->queue_count=5;
     for(unsigned i=0;i<5;++i)view->queue[i].position=9996+i;
-    for(unsigned mode=0;mode<4;++mode) {
+    for(unsigned mode=0;mode<5;++mode) {
+        view->disconnect_confirm=mode==4;
         view->keyboard.open=mode==1;view->queue_confirm=mode==2;view->jump_total=mode==3?256:0;view->jump_done=128;
         memset(view->keyboard.text,'W',127);view->keyboard.text[127]=0;
         memset(view->queue_query,'W',127);view->queue_query[127]=0;

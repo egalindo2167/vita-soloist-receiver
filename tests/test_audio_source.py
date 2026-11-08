@@ -25,7 +25,7 @@ import audio_host
 import host
 import send_audio
 import windows_host
-from security_support import pairing,tls_client
+from security_support import pairing,tls_client,read_exact
 
 CABLE={'id':'{exact.cable.id}','name':'CABLE Input (VB-Audio Virtual Cable)'}
 PHYSICAL={'id':'headphones','name':'Headphones (Realtek)'}
@@ -270,8 +270,7 @@ class CaptureTlsTests(unittest.TestCase):
                         with contextlib.suppress(OSError):raw.recv(64)
                     source.assert_not_called()
                     with tls_client(addresses[0],identity,key) as client:
-                        header=bytearray()
-                        while len(header)<16:header.extend(client.recv(16-len(header)))
+                        header=read_exact(client,16)
                         self.assertEqual(bytes(header),struct.pack('<4sIII',b'VAER',2,1,0))
                         self.assertEqual(client.recv(1),b'')
                     self.assertEqual(source.call_count,1)

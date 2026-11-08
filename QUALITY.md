@@ -1,16 +1,13 @@
-# Choose stream quality on the Vita — 1.3
+# Choose stream quality on the Vita — 1.3.1
 
-1. To enable 1.3 search, extract the complete ZIP and run **pc/Upgrade Host.cmd**.
-2. Install **dist/vita-audio-receiver.vpk** over the existing app. Keep the
-   pairing file, Soloist account and Remote profile. No new pairing is needed.
-3. Open the receiver and tap the **gear → Audio quality**, or press SELECT,
-   select Audio quality and press X. It works while playing
-   and on the connection screen.
-4. Choose **LOCAL** or **REMOTE**, then tap **128 KBPS**, another fixed rate,
-   or **AUTO**. The two preferences are independent; both initially stay at 320.
-5. Tap the **Settings** back arrow or press **Circle**. The current route's selection applies to
-   the ongoing Opus stream. Allow the audio already buffered to drain; no PC
-   restart or decoder restart is required.
+First complete [HOST_SETUP.md](HOST_SETUP.md). While connected, or on the
+connection screen:
+
+1. Open **gear → Audio quality**, or press SELECT, choose Audio quality and X.
+2. Choose **Local** or **Remote**, then a fixed **96/128/160/192/256/320 kbps**
+   or **Auto**. The saved choices are independent; initial defaults are 320.
+3. Circle returns to Settings; SELECT closes it. The active route's choice
+   applies during playback after already buffered audio, without restarting.
 
 Use Up/Down or L/R to select the connection tab, Left/Right or X to cycle its
 rate, and Circle to return to Settings. SELECT closes the whole menu. Choices are saved
@@ -79,17 +76,5 @@ hardware/mobile-network tests are still needed to tune the thresholds.
 
 ## Compatibility and PC settings
 
-Use a PC host from 1.1 or later and the current VPK. The pairing file stays the same. The
-new receiver uses VAQ2 receipt feedback and extended control capabilities; an
-older host does not understand all of these. Host 1.1 and later still accept legacy VAQ1
-feedback, but the new pacing/reset/queue behavior needs the new receiver too.
-
-The Vita preference overrides the PC's initial Opus bitrate. **Use Opus 320.cmd**
-sets the codec/default; it does not overwrite a saved Remote preference of 128.
-PCM remains available but has no bitrate compression setting.
-
-When Funnel/ngrok is enabled, the new Automatic network mode binds receiver
-listeners to loopback. Keep the Vita in **REMOTE**, including at home, or run
-**pc/Use Local and Remote.cmd** to explicitly allow direct LAN access as well.
-
-See NETWORK_TUNING.md for batching, buffer/latency, flush and recovery details.
+Use the host and Vita app from the same public release. Saved pairing remains
+valid through ordinary updates. See HOST_SETUP.md for the short update steps.

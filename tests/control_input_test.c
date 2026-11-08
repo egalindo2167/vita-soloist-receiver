@@ -72,6 +72,17 @@ int main(void) {
     assert(!strcmp((const char *)out+16,"q:test-token"));
     shared.jump_total=79;
     assert(make_command((Input){1,SCE_CTRL_CIRCLE,0,0},out)>0 && ctl_read32(out+8)==CTL_QUEUE_CANCEL);
-    puts("Control input: queue-preserving selection, global shoulder/transport actions, page navigation and expanded touch-edge/drag behavior passed.");
+    shared.jump_total=0;shared.browser=0;
+    assert(!make_command((Input){1,SCE_CTRL_CIRCLE,0,0},out) && shared.disconnect_confirm && !control_take_disconnect());
+    assert(!make_command((Input){1,SCE_CTRL_CIRCLE,0,0},out) && !shared.disconnect_confirm && !control_take_disconnect());
+    assert(!make_command((Input){1,SCE_CTRL_CIRCLE,0,0},out) && shared.disconnect_confirm);
+    assert(!make_command((Input){1,SCE_CTRL_CROSS,0,0},out) && control_take_disconnect() && !shared.disconnect_confirm);
+    assert(!control_take_disconnect());
+    assert(!make_command((Input){1,SCE_CTRL_CIRCLE,0,0},out) && shared.disconnect_confirm);
+    assert(!make_command((Input){2,UI_CONFIRM_GO.x,UI_CONFIRM_GO.y,0},out) && !control_take_disconnect());
+    assert(!make_command((Input){2,UI_CONFIRM_GO.x,UI_CONFIRM_GO.y,1},out) && control_take_disconnect());
+    assert(!make_command((Input){1,SCE_CTRL_CIRCLE,0,0},out));
+    assert(!make_command((Input){2,UI_CONFIRM_CANCEL.x,UI_CONFIRM_CANCEL.y,1},out) && !shared.disconnect_confirm);
+    puts("Control input: queue preservation, confirmed disconnect/cancel, shoulder actions and touch bounds passed.");
     return 0;
 }

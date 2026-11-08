@@ -1,4 +1,4 @@
-# Dedicated Soloist audio — version 1.3
+# Dedicated Soloist audio — version 1.3.1
 
 The managed host uses a virtual cable to keep Soloist away from physical speakers,
 plus Windows **process loopback** to capture only the host-owned Soloist process
@@ -6,12 +6,12 @@ and its child processes. Other applications are excluded even if they are
 accidentally sent to the same cable. The Windows default output is never selected
 as a capture fallback or changed by this app.
 
-Requires Windows x64, **Windows 11** (or build 20348+), Python 3.14, and your
-existing official Soloist installation/key. Process capture requires build
-20348 or later; Windows 10 version 2004 alone does not meet that minimum.
+Requires **Windows 11 x64**, standard Python 3.14, and your
+own official Soloist installation/key. Native Windows ARM Python is unsupported;
+x64 emulation on Windows ARM is untested.
 No driver, Soloist executable, account key or remote service account is bundled.
 
-## Install and upgrade once
+## First audio setup
 
 1. Close the Vita app. Download VB-CABLE from the official
    **https://vb-audio.com/Cable/** page. Extract the driver package, run its
@@ -20,11 +20,10 @@ No driver, Soloist executable, account key or remote service account is bundled.
 2. In Windows **Settings → System → Sound**, keep your preferred **headphones
    or speakers** as the default output. If installing the cable changed that
    default, put it back. The cable should not be the system-wide default.
-3. Extract the complete version 1.3 ZIP. Keep **pc/native/** with the scripts.
-   Run **pc/Upgrade Host.cmd** for your existing setup. Your Soloist key/login,
-   favorites, transport pairing, startup shortcut, and Funnel settings stay saved.
-   A new PC uses **pc/Setup Host.cmd** instead.
-4. The audio wizard runs automatically for the first upgrade from before 1.0. You can
+3. Extract the complete application ZIP. Keep **pc/native/** with the scripts.
+   Run **pc/Setup Host.cmd** and follow its prompts. An existing installation
+   uses **Upgrade Host.cmd**, keeping its saved settings.
+4. The audio wizard runs during first setup. You can
    reopen it with **pc/Setup Audio.cmd**. Choose the numbered virtual **playback**
    device, normally **CABLE Input (VB-Audio Virtual Cable)**. The wizard only
    offers cable candidates, saves the exact endpoint ID, and sets that cable's
@@ -50,10 +49,11 @@ No driver, Soloist executable, account key or remote service account is bundled.
    its start time/executable, cable availability, and live audio-session routing.
    A missing session or wrong output does not count as a successful check. Fix
    the route and retry, or Q leaves streaming blocked for later setup.
-9. Install **dist/vita-audio-receiver.vpk** over the existing Vita application.
-   Keep `ux0:data/vita-audio-receiver/` and the PC data folders. Do not create a
-   new pairing merely to upgrade. Open the Vita app and use the same Local or
-   Remote mode as before. The first stream resumes automatically after setup.
+9. Install **dist/vita-audio-receiver.vpk** in VitaShell, then open the app once
+   to create `ux0:data/vita-audio-receiver/`. Complete the USB pairing steps in
+   [HOST_SETUP.md](HOST_SETUP.md), then reopen the app and connect in **Local**
+   mode for the first test. When updating, install over the existing app and
+   keep its saved data and pairing.
 
 Windows normally retains per-app routing. If a later Soloist update changes
 the executable path, Windows resets its route, or the cable is reinstalled,
@@ -123,7 +123,7 @@ cannot guarantee that Windows will never emit a first sample on a wrong output.
 | Virtual cable device is missing | Enable/install the saved cable; rerun Setup Audio if it was reinstalled with a new ID. |
 | Soloist is not running | Check Host Status/log and the official Soloist build/key; allow the supervisor to restart it. |
 | Soloist output mismatch | Set only Soloist's Volume mixer output back to the selected cable; rerun Audio Status or let the Vita retry. |
-| Process capture needs Windows 11 | This backend requires Windows build 20348+; it does not fall back to system capture. |
+| Process capture needs Windows 11 | Use supported Windows 11 x64; this backend never falls back to system capture. |
 | Could not start capture | Run Audio Status and inspect `host.log` for the Windows error code; keep the full `pc/native` folder installed. |
 
 The native helper's hash is checked before execution. A missing/modified helper
@@ -146,6 +146,6 @@ use, use the managed host and Audio Status instead.
 - Spotify Soloist's documented command-line audio options:
   https://developer.spotify.com/documentation/soloist/reference/command-line
 
-Version 1.1 preserves this capture setup. Network/queue changes: NETWORK_TUNING.md.
+Network/queue details: [network tuning](docs/NETWORK_TUNING.md).
 A confirmed Soloist expired-build exit code now displays an update message on Vita;
 install a newer official Soloist build and run Upgrade Host.cmd.

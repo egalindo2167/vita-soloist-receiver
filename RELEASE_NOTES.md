@@ -1,4 +1,4 @@
-# Vita Audio Receiver 1.3 — First public release
+# Vita Audio Receiver 1.3.1 — First public release
 
 Stream Spotify Soloist from a Windows PC to a homebrew PS Vita, with a
 desktop-inspired interface, cover art, Spotify controls and upcoming-song search.
@@ -7,7 +7,7 @@ client or an app endorsed by Spotify/Sony.
 
 ## Download and setup
 
-Download **vita-audio-receiver-1.3.zip** from the assets below and **extract it**.
+Download **vita-audio-receiver-1.3.1.zip** from the assets below and **extract it**.
 It includes the Windows host, required native helper/Opus DLL, prebuilt Vita VPK,
 source, licenses and step-by-step guides. GitHub's automatic Source code archives
 are for developers; they do not contain the prebuilt VPK.
@@ -15,7 +15,7 @@ are for developers; they do not contain the prebuilt VPK.
 Start with **HOST_SETUP.md → First setup on a new PC** and **AUDIO_SETUP.md**.
 Use **Setup Host.cmd** for a new PC, **Upgrade Host.cmd** for an existing host.
 Install **dist/vita-audio-receiver.vpk** using VitaShell. Existing users keep
-their data; version 1.3 search needs both host and VPK updated.
+their data; use the host and VPK from this same release.
 
 Requires a homebrew Vita, Windows 11 x64 PC kept awake/signed in, 64-bit Python
 3.14, a separately installed virtual cable, and your own official Soloist
@@ -36,6 +36,8 @@ or personal configuration is included. Each user creates their own pairing.
 - Mandatory paired TLS 1.3, USB pairing/revocation and optional Tailscale Funnel
   remote access. Funnel is optional; local setup is a separate first step.
 - Original LiveArea icon, exact-black UI, dimming and screen-off listening.
+- Circle confirms before disconnecting from Now playing; ordinary Back behavior
+  remains in the queue/settings. Updates retain the saved codec and bitrate.
 
 ## Known limits and verification
 
@@ -49,11 +51,9 @@ Opus link quality is separate from Spotify source quality and is lossy. Network
 buffers cannot restore Windows driver capture gaps. Soloist is obtained/updated
 separately; its account requirements, API and build expiry remain upstream limits.
 
-See **BUILD_VALIDATION.md** for actual automated results and unverified hardware
-behaviors. Encrypted fixtures use synthetic queues/audio, not a live Spotify
-account. The maintainer reports a second user's local setup took about 15
-minutes with relatively straightforward instructions; that is individual
-feedback, not a timing guarantee or full remote/hardware certification.
+Automated verification and its hardware limits are recorded in
+**docs/dev/BUILD_VALIDATION.md**. Windows security can block unsigned native
+components; see **docs/WINDOWS_TROUBLESHOOTING.md** before setup.
 
 ## Reporting problems
 
@@ -63,5 +63,4 @@ host.json, Soloist account data or private recordings. Report vulnerabilities
 privately using **Security → Advisories → Report a vulnerability**.
 
 Project code is MIT-licensed; third-party components retain their own licenses.
-See **THIRD_PARTY_NOTICES.md** and **SUPPLY_CHAIN.md**. This public packaging pass
-adds distribution/support files and retains the tested 1.3 application binaries.
+See **THIRD_PARTY_NOTICES.md** and **docs/dev/SUPPLY_CHAIN.md**. 
