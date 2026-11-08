@@ -89,10 +89,14 @@ verify their archive hashes. Review both when updating them.
 
 The build workflow now pins these external actions/image:
 
-- actions/checkout (v4): `11d5960a326750d5838078e36cf38b85af677262`
-- actions/setup-python (v5): `a26af69be951a213d495a4c3e4e4022e16d87065`
-- actions/upload-artifact (v4): `ea165f8d65b6e75b540449e92b4886f43607fa02`
+- actions/checkout (v6.0.3): `df4cb1c069e1874edd31b4311f1884172cec0e10`
+- actions/setup-python (v6.0.0): `e797f83bcb11b83ae66e0230d6156d7c80228e7c`
+- actions/upload-artifact (v6.0.0): `b7c566a772e6b6bfb58ed0dc250532a479d7789f`
 - VitaSDK: `vitasdk/vitasdk@sha256:acd15285e1ae473e925c6f83fa41e2de45eb8b9e8ba89be7df03e194c35c11d3`
+
+Each action's tag-to-commit mapping was checked against its official GitHub API
+reference, and action.yml at that exact commit declares Node 24. Full commit
+pins, read-only permissions and nonpersistent checkout credentials are retained.
 
 CI runs Windows Python/encoder tests and Linux native/TLS/protocol tests before
 building the VPK. The release packager emits the ZIP/VPK SHA-256 sidecar and

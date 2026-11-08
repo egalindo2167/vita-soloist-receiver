@@ -1,5 +1,25 @@
 # Verification
 
+## First Windows CI follow-up
+
+The initial uploaded Windows log ran 175 tests, with two errors and 14 expected
+optional/platform skips. The fake ngrok process reached real Windows Job APIs;
+the supervisor fixture now mocks that boundary explicitly and forces its
+Windows branch on every test OS, checking assign, creation flags and close.
+The separate real OwnedProcessJob implementation test remains in the suite.
+
+The relay's one-shot server used the production listener's 0.5-second accept
+poll as its entire lifetime. It now waits up to five seconds in the fixture and
+connects to its explicit IPv4 relay address, avoiding localhost/IPv6 fallback.
+A deliberate 650 ms client delay checks that the server survives beyond the old
+poll interval. EOF fails rather than spinning, and the server worker is joined
+in finally. Production TLS handshake deadlines/authentication are unchanged.
+
+All 175 tests pass locally with the optional native/CLI adapters enabled. This
+is Linux plus an explicitly exercised mocked Windows supervisor branch, not
+evidence of a successful corrected GitHub Windows run. Push the changed files
+to start a new workflow run; rerunning the old commit does not apply the fixes.
+
 ## Public release packaging checks
 
 The release packager's tests verify that Git ignore/attribute files, workflows/
@@ -258,6 +278,7 @@ reconnecting, and the actual native Vita decoder decodes the whole changing-rate
 stream. Native tests cover preference validation/persistence, feedback bytes,
 settings-worker staging and quality-menu framebuffer/OLED bounds.
 
-The workflow also adds a Windows job using the actual bundled encoder DLL. It
-has not run on a remote runner here. Windows capture/DLL loading, Vita touch
+The workflow includes a Windows job using the actual bundled encoder DLL. The
+initial Windows log and subsequent fixture corrections are described above;
+the corrected remote run remains to be verified. Windows capture, Vita touch
 input and sustained variable-network Auto behavior remain physical-device checks.

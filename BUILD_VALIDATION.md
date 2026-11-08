@@ -94,7 +94,30 @@ archive has 221 files; its VPK/capture-helper/Opus hashes match the preceding
 
 The recorded VPK hash describes the supplied build, not a promise that a rebuild
 in another path/toolchain is byte-identical. Rebuilt outputs have newly generated
-dist/SHA256SUMS.txt; the workflow does not attest that GitHub executed here.
+dist/SHA256SUMS.txt; local packaging does not attest to a successful remote build.
+
+## First Windows CI follow-up
+
+The uploaded initial Windows log (Python 3.14.10) ran 175 tests with two errors
+and 14 optional/platform skips. Its mocked ngrok process reached a real Windows
+Job API; the other error was a TLS relay handshake timeout. Inspection exposed
+the fixture's one-shot 0.5-second accept lifetime and localhost resolution race.
+
+The supervisor fixture now explicitly mocks the Windows job boundary, exercises
+the Windows branch on Linux too, and checks assign/close/creation flags. The
+relay fixture has a bounded five-second accept wait, explicit IPv4 endpoint,
+650 ms delayed-client regression, EOF rejection and finally-based worker join.
+No tests were removed/skipped to hide these errors; production TLS deadlines,
+authentication, process containment and all application binaries are unchanged.
+
+After the fixes, the complete **175-test suite passed with no skips** on Linux
+with all optional native/CLI adapters, using Python 3.14.9 / OpenSSL 3.5.9.
+As a negative control, restoring the old 0.5-second accept lifetime makes the
+delayed-client relay test fail with the expected authenticated-accept timeout.
+The corrected Windows branch is tested with mocks; a fresh GitHub Windows run
+is still required. SHA-pinned official actions were also updated to verified
+Node 24 releases; their YAML, inputs and read-only/nonpersistent-token policy
+were checked locally. No remote rerun or successful VPK CI build is claimed.
 
 ## Upstream and hardware limits
 
@@ -107,8 +130,9 @@ for a user's actual build. Full large-playlist search needs another data source.
 
 Actual Windows WASAPI/cable behavior, physical Vita touch/keyboard/panel handling
 and sustained Wi-Fi playback have not been executed here. The Windows helper
-is unchanged from its source-verified 1.1 build; no Windows run or remote CI run
-is claimed in this pass. Passing automated checks is not a security audit.
+is unchanged from its source-verified 1.1 build. The first Windows CI log is
+described above; no corrected remote run or Windows audio-hardware execution is
+claimed in this pass. Passing automated checks is not a security audit.
 
 Install over the existing title without deleting data and run Upgrade Host.
 Check a large playlist's returned count with Queue Availability.cmd, submit a

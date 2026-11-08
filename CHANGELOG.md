@@ -2,6 +2,13 @@
 
 ## 1.3
 
+- First Windows CI follow-up: isolate the fake subprocess from real Windows Job
+  APIs and exercise its assign/close lifecycle on every test OS. Give the
+  one-shot TLS relay fixture a bounded accept wait and explicit IPv4 endpoint,
+  with delayed-client regression coverage and guaranteed worker cleanup.
+  Production TLS deadlines/authentication and application binaries are unchanged.
+- SHA-pinned official checkout/setup-python/upload-artifact actions now use
+  verified Node 24 releases to remove the old action-runtime deprecation warning.
 - Public distribution preparation: concise download/setup README, full reference
   retained in USER_GUIDE.md, build/contribution/support guides, issue/PR templates,
   private security-report instructions and step-by-step GitHub publication notes.

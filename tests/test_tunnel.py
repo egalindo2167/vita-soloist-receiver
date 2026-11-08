@@ -88,7 +88,13 @@ class TunnelTests(unittest.TestCase):
                 count[0]+=1
                 if count[0]==2:stop.set()
                 return api_value(controls=CONTROLS if count[0]==1 else 'tcp://changed.ngrok.io:12300')
-            with mock.patch.object(tunnel,'load_settings',return_value={'ngrok_exe':'ngrok.exe','token_dpapi':'opaque'}), \
+            # Exercise Windows containment on every test OS. A fake Popen must
+            # never reach the real kernel API with its fake process handle.
+            with mock.patch.object(tunnel,'sys',mock.Mock(platform='win32')), \
+                 mock.patch.object(tunnel,'process_options',return_value={'creationflags':0x200}), \
+                 mock.patch.object(tunnel.subprocess,'CREATE_NO_WINDOW',0x08000000,create=True), \
+                 mock.patch.object(tunnel.windows_host,'OwnedProcessJob') as job, \
+                 mock.patch.object(tunnel,'load_settings',return_value={'ngrok_exe':'ngrok.exe','token_dpapi':'opaque'}), \
                  mock.patch.object(tunnel.windows_host,'unprotect_key',return_value='private-test-token'), \
                  mock.patch.object(tunnel.subprocess,'Popen',return_value=process) as launch, \
                  mock.patch.object(tunnel,'stop_process') as cleanup,mock.patch.object(tunnel,'read_agent',side_effect=read), \
@@ -99,6 +105,9 @@ class TunnelTests(unittest.TestCase):
             self.assertNotIn('private-test-token',(root/'ngrok-vita.yml').read_text())
             self.assertIn('control_host=changed.ngrok.io',(root/'remote/remote-host.txt').read_text())
             self.assertFalse(json.loads((root/'tunnel-status.json').read_text())['running'])
+            job.assert_called_once_with();job.return_value.assign.assert_called_once_with(process)
+            job.return_value.close.assert_called_once_with()
+            self.assertEqual(launch.call_args.kwargs['creationflags'],0x08000200)
             cleanup.assert_called_once_with(process);self.assertNotIn('private-test-token',output.getvalue())
     def test_setup_stores_provider_key_protected_and_copies_agent_to_stable_path(self):
         with tempfile.TemporaryDirectory() as td:
@@ -183,17 +192,31 @@ class TunnelTests(unittest.TestCase):
             for role in ('audio','control'):
                 errors=[];payload=b'private song title and metadata '*40
                 with secure_host.SecureListener('127.0.0.1',0,role,registry) as listener,TcpForward(listener.getsockname()) as relay:
+                    # Production callers retry the short accept poll. This
+                    # one-shot fixture needs time for client/relay scheduling.
+                    # Only the test's accept wait changes; the TLS deadline does not.
+                    listener.settimeout(5)
                     def serve():
                         try:
                             channel,_=listener.accept()
                             with channel:channel.sendall(payload)
                         except BaseException as exc:errors.append(exc)
                     worker=threading.Thread(target=serve);worker.start()
-                    with tls_client(('localhost',relay.address[1]),identity,key,role) as client:
-                        received=bytearray()
-                        while len(received)<len(payload):received.extend(client.recv(len(payload)-len(received)))
-                        self.assertEqual(bytes(received),payload)
-                    worker.join(3);self.assertFalse(errors,errors)
+                    try:
+                        # Regress the old 0.5-second poll race even on fast hosts.
+                        time.sleep(.65)
+                        self.assertTrue(worker.is_alive(),errors)
+                        # The fixture is IPv4-only: avoid localhost's platform-
+                        # dependent IPv6 fallback before reaching the test relay.
+                        with tls_client(relay.address,identity,key,role) as client:
+                            received=bytearray()
+                            while len(received)<len(payload):
+                                part=client.recv(len(payload)-len(received))
+                                self.assertTrue(part,'Relay closed before the complete payload')
+                                received.extend(part)
+                            self.assertEqual(bytes(received),payload)
+                    finally:worker.join(6)
+                    self.assertFalse(worker.is_alive());self.assertFalse(errors,errors)
                     self.assertNotIn(payload[:40],relay.wire)
 
 @unittest.skipUnless(os.environ.get('VITA_REMOTE_TEST_LIB'),'Native remote profile parser library optional')

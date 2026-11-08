@@ -85,6 +85,16 @@ an empty template. All real keys, pairing and personal favorites stay private.
    appear automatically from .github after the push. No issue labels need to be
    created for those forms to work.
 
+### Update files after a failed check
+
+If a corrected ZIP is supplied, extract it separately and copy the contents of
+its inner vita-audio-receiver folder over the cloned repository, replacing
+matching files while retaining the clone's .git folder. Review Changes in
+GitHub Desktop, commit the correction and **Push origin**. The push starts a new
+Actions run for the new commit. **Re-run jobs** on the old run still executes
+the old source and cannot pick up local fixes. Wait for the new run's checks
+before publishing. Test/workflow-only fixes do not require reinstalling the VPK.
+
 ## 5. Create the first downloadable release
 
 1. On the repository page click **Releases → Create a new release** or **Draft a
