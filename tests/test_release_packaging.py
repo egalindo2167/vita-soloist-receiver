@@ -5,9 +5,11 @@ import io
 import json
 from pathlib import Path
 import tempfile
+import sys
 import unittest
 import zipfile
 
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
 spec=importlib.util.spec_from_file_location('package_release',Path(__file__).resolve().parents[1]/'tools/package_release.py')
 release=importlib.util.module_from_spec(spec);spec.loader.exec_module(release)
 

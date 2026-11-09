@@ -1,122 +1,110 @@
-# Maintainer release procedure
+# Publish the 1.3.2 prerelease
 
-Repository: **egalindo2167/vita-soloist-receiver**. The public repository was
-checked and exists with default branch main. If moving/forking it, update the
-README, issue-template/support/security links. No repository or release is
-created remotely by preparing a local package.
+Repository: egalindo2167/vita-soloist-receiver. Version 1.3.1 has already been
+published as a prerelease. Keep its tag and assets intact; publish these fixes
+under **v1.3.2** (visible version 1.3.2, Vita APP_VER 01.19).
 
-## Prepare and push source
+## Update the existing clone and record deletions
 
-1. Copy the prepared project contents into the cloned repository, retaining
-   .git. When copying over an older checkout, merging folders does not remove
-   old files: after confirming each replacement below exists, remove its old
-   root copy so GitHub Desktop records the moves/deletions. Do not remove .git
-   or your installed host/Vita data. Review all changes, commit to main and
-   Push origin.
-2. Let the branch workflow finish. It builds both Windows binaries from the
-   checkout using pinned upstream inputs/toolchain, tests those exact outputs
-   on Windows, runs Linux native/Python checks, then builds the Vita VPK.
-3. The final packager uses pc/version.py to name the application ZIP, validates
-   the native payload hashes/source commit and writes BUILD_INFO.txt plus
-   SHA256SUMS.txt. Its release artifact includes that ZIP, VPK and both metadata
-   files. No Soloist binary/key or private pairing/account data is included.
+1. Extract the complete prepared ZIP. Copy the contents of its inner
+   vita-audio-receiver folder into the existing Git clone, preserving .git.
+   Copying/merging files cannot delete obsolete tracked files by itself.
+2. Open PowerShell in that repository's root and run:
 
-### Documents moved in this revision
+```powershell
+py -3.14 tools/clean_source_checkout.py
+py -3.14 tools/clean_source_checkout.py --apply
+```
 
-| Old root document | New location |
+If Git is not available to PowerShell, install Git for Windows and reopen the
+terminal before running these commands.
+
+The first command previews the changes; the second records the ten guide
+removals using git rm and untracks generated native outputs using git rm
+--cached. Generated native files remain on disk for local testing, but the
+updated .gitignore prevents committing them again. Missing replacement guides
+or modified tracked originals stop cleanup rather than forcing deletion.
+The command only operates when its project directory is the Git root.
+
+| Removed root copy | Replacement |
 | --- | --- |
 | BUILDING.md | docs/dev/BUILDING.md |
 | BUILD_VALIDATION.md | docs/dev/BUILD_VALIDATION.md |
+| NETWORK_TUNING.md | docs/NETWORK_TUNING.md |
 | PUBLISHING.md | docs/dev/PUBLISHING.md |
-| SUPPLY_CHAIN.md | docs/dev/SUPPLY_CHAIN.md |
 | REVIEW_1.1.md | docs/dev/REVIEW_1.1.md |
 | SECURITY_REVIEW_0.13.md | docs/dev/SECURITY_REVIEW_0.13.md |
-| USER_GUIDE.md | docs/REFERENCE.md |
 | SOLOIST_SETUP.md | docs/SOLOIST_SETUP.md |
-| NETWORK_TUNING.md | docs/NETWORK_TUNING.md |
+| SUPPLY_CHAIN.md | docs/dev/SUPPLY_CHAIN.md |
 | TUNNEL_SETUP.md | docs/advanced/NGROK_SETUP.md |
+| USER_GUIDE.md | docs/REFERENCE.md |
 
-## Create the version tag
+The four generated files to untrack are pc/native/soloist-capture.exe,
+pc/native/opus.dll, pc/native/SHA256SUMS.txt and pc/native_hashes.py. Their
+sources, build recipes and licenses stay in Git. They still ship inside the
+complete application release, generated/tested by that run.
 
-The first public candidate in this preparation is **1.3.1**, Vita APP_VER 01.18.
-The version tag must exactly match pc/version.py: **v1.3.1**. There were no public
-releases/tags at the time of this review. Do not reuse a published version tag.
+3. Run `py -3.14 tools/source_policy.py --tracked`. It must pass. Review the
+   staged deletions, moved guides and other changes in GitHub Desktop. Commit
+   all intended changes and Push origin. Do not upload through the web file
+   uploader as a substitute: it cannot record these deletions.
+4. Let the branch workflow pass. CI checks source policy, rebuilds both Windows
+   payloads, then downloads those outputs into both Windows/Linux test jobs.
+   Only successful tests permit the SDK VPK build and versioned packaging.
 
-In GitHub Desktop, select **History**, right-click the verified release commit,
-choose **Create tag**, enter **v1.3.1** and create it, then **Push origin** to push
-it. Alternatively, from a Git-enabled terminal in the repository:
+## Tag and review the CI-built draft
+
+In GitHub Desktop History, right-click the verified release commit, choose
+Create tag, enter **v1.3.2**, and Push origin. Or use a Git terminal:
 
 ```powershell
-git tag v1.3.1
-git push origin v1.3.1
+git tag v1.3.2
+git push origin v1.3.2
 ```
 
-Do not create/publish a release manually to create the tag. The tag push starts
-a fresh workflow from that tagged commit. A tag/version mismatch fails before
-building. Branch/PR builds have read-only permissions and do not create releases.
-
-## Review the CI-created draft
-
-1. Wait for windows_payloads, windows, native and build to succeed on the tag run.
-   The release_draft job then downloads that run's exact release artifact.
-2. It verifies checksums, BUILD_INFO source commit/version, and that the remote
-   tag still resolves to the tested commit. Only this tag-only job receives
-   contents:write. It creates/updates a **draft**, never a published release.
-3. Open GitHub → Releases and open that draft. Verify the tag, source commit,
-   release notes and these four attached files:
+Do not move/delete v1.3.1. Tag/version mismatches fail before building. After the
+new tag's windows_payloads, windows, native and build jobs pass, release_draft
+prepares a draft with these exact four assets:
 
 | File | Purpose |
 | --- | --- |
-| vita-audio-receiver-1.3.1.zip | Complete application package from this tag's CI build |
-| vita-audio-receiver.vpk | Same CI-built VPK also contained in that ZIP |
-| SHA256SUMS.txt | ZIP and VPK hashes for these assets |
-| BUILD_INFO.txt | Version, exact source commit and public CI run URL |
+| vita-audio-receiver-1.3.2.zip | Complete application built/packaged by this tag's CI |
+| vita-audio-receiver.vpk | Same VPK also inside the ZIP |
+| SHA256SUMS.txt | Hashes of this ZIP and standalone VPK |
+| BUILD_INFO.txt | Version, tested source commit and public run URL |
 
-4. Download the draft ZIP and inspect/extract it. Confirm pc/native payloads,
-   generated pc/native_hashes.py, VPK, licenses and first-time guides are present.
-   Run the documented Windows/Vita acceptance checks. In particular, unsigned
-   native components/Smart App Control remain an unverified compatibility limit.
-5. Edit the public notes if needed, mark latest when offered, then **Publish
-   release** yourself. No workflow step publishes automatically or sends a
-   release announcement. The helper refuses to overwrite a public release.
+Download the draft ZIP and verify its manifests. No obsolete root guides should
+appear. Check the new setup/source-build guidance and test playback on Windows/
+Vita. The draft helper checks tag/commit identity and asset hashes and refuses
+to overwrite a public release. It never publishes automatically.
 
-**Do not replace these assets with the locally prepared ZIP**, a renamed browser
-copy such as `... 3.zip`, or a locally rebuilt VPK. Local preparation is marked
-as such in BUILD_INFO and is for reviewing/updating source. The public download
-comes from CI. If a browser adds a suffix to a downloaded copy, that does not
-change the canonical asset name produced/attached by CI.
+Select Pre-release, review the notes, then Publish release yourself. Share its
+direct version URL (or the release list); /releases/latest targets stable
+releases. Enable private vulnerability reporting and keep Issues available.
 
-GitHub automatically adds Source code archives; those omit the prebuilt VPK
-because dist is ignored. Tell users to download the named application ZIP.
-A checksum and public CI record bind files to this run, but are not Authenticode
-signatures or a professional security/reproducibility audit. Native expected
-hashes are generated from the actual source-built binaries; original source,
-upstream/toolchain pins and public run metadata remain reviewable.
+Use the CI-attached application assets for public distribution. The locally
+prepared ZIP is for updating/reviewing source and is explicitly labelled local
+preparation in BUILD_INFO. Do not replace CI assets with that package or a
+renamed browser download. Source code archives contain no prebuilt VPK or
+native runtime payloads; users need the named application ZIP.
 
-## Fix a failed run
+## Source builds and failed runs
 
-For source fixes, update files in the clone, commit and push; Re-run jobs on an
-old run still tests its old commit. For a temporary upstream outage, retry the
-failed jobs after recovery. The dependency helper already has bounded retries
-and a same-hash official Mbed TLS fallback. Do not bypass checks to get green.
-If fixing a tagged candidate, use a new version/tag rather than moving a published
-one. The existing draft can be discarded; a published release is never clobbered.
+Source users must generate the native payloads before running the host/tests;
+see [BUILDING.md](BUILDING.md). Release and loader hashes are generated from
+those actual outputs, not copied by hand into guides. A hash difference across
+machines is not by itself evidence of tampering or reproducibility; no such
+cross-machine guarantee is made. See [SUPPLY_CHAIN.md](SUPPLY_CHAIN.md).
 
-Enable Settings → Advanced Security → **Private vulnerability reporting**, keep
-Issues enabled, and preserve the included MIT/upstream licenses. Code signing
-is a separate certificate/provider integration; no signing credentials have
-been configured or requested by this package. Pin/update CI dependencies with
-[SUPPLY_CHAIN.md](SUPPLY_CHAIN.md), and record actual validation in
-[BUILD_VALIDATION.md](BUILD_VALIDATION.md).
+A source fix requires a new commit/push; rerunning an older workflow tests the
+older commit. Temporary upstream failures can be retried after recovery. Keep
+the pinned hashes, bounded retries and official fallback checks intact. Record
+actual validation in [BUILD_VALIDATION.md](BUILD_VALIDATION.md).
 
-References: [GitHub tags in Desktop](https://docs.github.com/en/desktop/managing-commits/managing-tags-in-github-desktop),
-[release management](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository),
-and [workflow events](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows).
+## Remaining limitations
 
-## VitaDB submission is separate
-
-The existing title ID **VRXA00001** is retained so updates keep the same app/data.
-Before a VitaDB submission, check the current catalog or ask its maintainer to
-confirm that ID is available. The catalog lookup in this review was inconclusive;
-GitHub publication is not a VitaDB registration or a global title-ID reservation.
-Do not change an installed app's ID casually, since that creates a separate title.
+Native Windows files are unsigned; Smart App Control and physical hardware
+checks remain necessary. No signing credential/service is configured. A CI
+build record and checksums are not Authenticode signatures or a security audit.
+Title ID VRXA00001 is retained; confirm availability before a separate VitaDB
+submission. No UI/branding changes are part of this revision.

@@ -5,6 +5,25 @@ End users should download the complete application ZIP from
 build from source. Official Soloist, Python and a virtual cable are installed
 separately. Source archives do not include a prebuilt Vita VPK.
 
+## Source checkout: build Windows payloads first
+
+Git tracks the C source/recipes and licenses, not `pc/native/soloist-capture.exe`,
+`pc/native/opus.dll`, `pc/native_hashes.py` or the native checksum manifest.
+Do not run Setup Host directly from an unbuilt clone. Use the complete release
+application ZIP, or build these outputs on Linux with Python 3.14, CMake, GNU
+ar/ranlib/objcopy and a C compiler:
+
+```sh
+python3.14 tools/build_release_payloads.py /tmp/windows-payloads
+```
+
+This fetches the pinned Zig/Opus archives, builds both Windows payloads and
+writes matching loader hashes/manifests. The generated files remain ignored by
+Git. CI rebuilds them and passes those exact files to both test jobs and the
+packaging job. The Linux test job needs these generated files too, because it
+verifies the release payload integrity even though it cannot execute Windows
+binaries. Install the hash-locked test requirements before the full test suite.
+
 ## Vita VPK
 
 Use Linux or a suitable Linux build environment with VitaSDK installed. The
@@ -18,7 +37,7 @@ export VITASDK=/absolute/path/to/vitasdk
 export PATH="$VITASDK/bin:$PATH"
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j2
-python3 tools/package_release.py /tmp/release/vita-audio-receiver-1.3.1.zip
+python3 tools/package_release.py /tmp/release/vita-audio-receiver-1.3.2.zip
 ```
 
 CMake downloads/hash-checks pinned Opus and Mbed TLS sources, so the first build
@@ -26,7 +45,7 @@ needs network access unless cached. Outputs are `build/vita-audio-receiver.vpk`
 and a distributable ZIP plus `.zip.sha256`. The ZIP includes `dist/` with the VPK
 and its checksum, PC scripts/native payloads, assets, licenses, source and guides.
 Generated `build/`, `dist/` and release ZIPs are not committed to Git.
-The hash recorded in BUILD_VALIDATION.md identifies the supplied 1.3.1 build.
+Use the generated checksum manifests belonging to the exact release you downloaded.
 A rebuild can differ by environment/path; use its generated checksums rather
 than assuming byte-identical output or an automated reproducibility attestation.
 
@@ -39,7 +58,7 @@ outages can still require retrying a failed job after the service recovers.
 The packager refuses a populated `pc/favorites.json`: that file must stay an
 empty template. It omits private runtime files and independently downloaded
 Soloist/provider/driver binaries. Use a clean checkout and inspect the output
-before publishing. No ignore rule can detect every secret pasted into source.
+before publication through the tagged CI draft. No ignore rule can detect every secret pasted into source.
 
 ## Python/native checks
 

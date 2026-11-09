@@ -1,4 +1,4 @@
-# Dedicated Soloist audio — version 1.3.1
+# Dedicated Soloist audio — version 1.3.2
 
 The managed host uses a virtual cable to keep Soloist away from physical speakers,
 plus Windows **process loopback** to capture only the host-owned Soloist process

@@ -3,6 +3,7 @@ import io
 from pathlib import Path
 import sys
 import unittest
+import tempfile
 from unittest import mock
 
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'pc'))
@@ -10,6 +11,13 @@ import check_python
 import host
 
 class SetupRuntimeTests(unittest.TestCase):
+    def test_source_checkout_without_built_payloads_gets_actionable_setup_error(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            for name in ('native_hashes.py','native/soloist-capture.exe','native/opus.dll'):
+                with self.assertRaisesRegex(RuntimeError,'complete application ZIP'):check_python.validate_payloads(root)
+                path=root/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(b'fixture')
+            check_python.validate_payloads(root)
     def test_python_preflight_rejects_wrong_abi_architecture_and_missing_tls(self):
         for target,value,message in (('size',4,'x64'),('machine','ARM64','x64'),('abi',1,'free-threaded'),('tls',False,'TLS-PSK')):
             with self.subTest(target=target),mock.patch.object(check_python.struct,'calcsize',return_value=4 if target=='size' else 8), \

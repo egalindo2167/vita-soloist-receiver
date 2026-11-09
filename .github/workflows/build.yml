@@ -23,6 +23,7 @@ jobs:
           python-version: '3.14'
       - name: Validate tag and build Windows payloads from this source
         run: |
+          python tools/source_policy.py --tracked
           python tools/release_metadata.py --check-ref "$GITHUB_REF"
           python tools/build_release_payloads.py /tmp/windows-native --source-commit "$GITHUB_SHA"
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0, Node 24
@@ -60,12 +61,17 @@ jobs:
           pc/native/soloist-capture.exe --version
           pc/native/soloist-capture.exe --info
   native:
+    needs: windows_payloads
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
         with:
           persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: source-built-windows-payloads
+          path: pc
       - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
         with:
           python-version: '3.14'

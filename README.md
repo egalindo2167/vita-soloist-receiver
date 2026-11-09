@@ -1,6 +1,6 @@
 # Vita Audio Receiver
 
-[Download the latest release](https://github.com/egalindo2167/vita-soloist-receiver/releases/latest)
+[Download the latest release](https://github.com/egalindo2167/vita-soloist-receiver/releases)
 · [Setup](HOST_SETUP.md) · [Controls](UI_GUIDE.md) · [Help](SUPPORT.md)
 
 Stream **Spotify Soloist running on your Windows PC** to a homebrew PS Vita,
@@ -16,8 +16,8 @@ terms remain separate from this project.
 
 ## Download and start
 
-Open **[Releases](https://github.com/egalindo2167/vita-soloist-receiver/releases/latest)**
-and download the complete **vita-audio-receiver-1.3.1.zip** application asset.
+Open **[Releases](https://github.com/egalindo2167/vita-soloist-receiver/releases)**
+and download the complete **vita-audio-receiver-1.3.2.zip** application asset.
 Extract it before running anything. Keep the PC files and `pc/native/` together.
 The release also provides a standalone VPK for updating an existing setup.
 
@@ -108,7 +108,7 @@ project, not an independently audited public internet service.
 | [SUPPORT.md](SUPPORT.md) | Troubleshooting, logs and bug reports |
 | [Full reference](docs/REFERENCE.md) | Full reference, bandwidth, controls and technical limits |
 | [SECURITY.md](SECURITY.md) | Trust boundaries and private vulnerability reporting |
-| [BUILDING.md](docs/dev/BUILDING.md) / [CONTRIBUTING.md](CONTRIBUTING.md) | Source builds, testing and contributions |
+| [BUILDING.md](docs/dev/BUILDING.md) / [CONTRIBUTING.md](CONTRIBUTING.md) | Source builds, generated native payloads and contributions |
 | [CHANGELOG.md](CHANGELOG.md) | Version history |
 
 Use **Issues** for reproducible bugs and feature requests. Inspect/redact logs
@@ -128,3 +128,8 @@ and run metadata. Review the CI-created draft before publishing.
 
 Maintainers: [publication checklist](docs/dev/PUBLISHING.md) and
 [checks performed / hardware limits](docs/dev/BUILD_VALIDATION.md).
+
+Source checkouts do not include generated Windows binaries or their loader-hash
+module. Download the complete application asset for installation, or follow
+[the source build instructions](docs/dev/BUILDING.md). A source ZIP is not an
+installable release. For this prerelease, use the release list above.

@@ -1,4 +1,4 @@
-# Supply-chain inputs — receiver 1.3.1
+# Supply-chain inputs — receiver 1.3.2
 
 The managed Windows Setup/Upgrade helpers install only wheel files with exact
 versions and SHA-256 hashes from **pc/requirements-windows-x64.lock**, using
@@ -18,12 +18,10 @@ hash also used for the Vita decoder:
 
 Source: https://downloads.xiph.org/releases/opus/opus-1.6.1.tar.gz
 
-Windows DLL SHA-256:
-`bedfd641d5bf47bef9af4c7bcb47da6f509c3c012809d6b87e283fdadfb94b17`
-
-This hash identifies the locally prepared 1.3.1 DLL. CI builds can have different
-hashes; each package generates `pc/native_hashes.py` from its actual build and
-the loader checks that expected hash before loading the full installed path. Windows
+The authoritative binary digests are generated with each release, not copied
+into this guide. For the Windows DLL and helper, use `pc/native/SHA256SUMS.txt`
+and `pc/native_hashes.py` inside that exact release ZIP. The loader checks the
+expected hash before loading the full installed path. Windows
 uses safe DLL search flags; it does not select an Opus DLL from PATH or the
 working directory. The PE is x86-64 and imports only Windows Kernel32/UCRT
 components, with no third-party runtime DLL dependency. Its native Windows ABI
@@ -67,8 +65,6 @@ imports are Windows components. MinGW-w64/Zig runtime notices remain in
 pc/native/licenses. The helper source is covered by this project's MIT LICENSE.
 
 Rebuild on Linux: `python tools/build_windows_capture.py /tmp/windows-capture /tmp/windows-capture/soloist-capture.exe`.
-The locally prepared 1.3.1 helper SHA-256 is
-`edb76237cb796b12d7c9258ba82e7a090c9c68409f40002583b843a475f8bd35`.
 The combined recipe generates `HELPER_SHA256` in `pc/native_hashes.py`;
 the loader verifies the shipped helper's hash before running
 it from the full application path. Both native binaries are listed in
@@ -123,6 +119,11 @@ reference, and action.yml at that exact commit declares Node 24. The selected
 download action supports the name/path inputs used here and treats an artifact
 digest mismatch as an error by default. Checkout credentials are not persisted.
 
+The repository tracks native source/recipes and notices, not generated EXE/DLL
+files, `pc/native_hashes.py`, or `pc/native/SHA256SUMS.txt`. Release packages
+include these generated outputs. CI rejects tracked native outputs before
+building. Linux and Windows tests download this run's freshly built payloads.
+
 CI first rebuilds the Windows EXE/DLL from this checkout using the pinned
 Zig/Opus sources, then generates native hashes and source-commit metadata. The
 Windows test job downloads and exercises those exact outputs. Linux native/TLS/
@@ -154,3 +155,18 @@ The SDK container and Python/runtime dependency contents are upstream trust
 inputs. Exact pins make changes reviewable; they are not a full supply-chain
 security audit. Treat any real Soloist data, pairing files or provider tokens
 as private inputs and keep them out of release packages.
+
+## Verify the exact release
+
+Use the `SHA256SUMS.txt` attached to that GitHub Release to verify its application
+ZIP and standalone VPK. Inside the ZIP, `dist/SHA256SUMS.txt` identifies its VPK,
+while `pc/native/SHA256SUMS.txt` identifies its Windows EXE/DLL. The packager
+checks that the latter agrees with the actual files and generated loader hashes.
+`BUILD_INFO.txt` records the commit/run; `native_hashes.py` records the same source
+commit in CI. Source-archive hashes and action/image pins above are build-input
+identities, not hashes of the resulting EXE, DLL or VPK.
+
+Build paths, PE metadata, host tools and caches can affect output bytes; this
+release process does not claim reproducible binaries across machines. Git-clone
+users must build native outputs or use a complete CI-built application release.
+Historical local binary hashes are deliberately omitted from this guide.

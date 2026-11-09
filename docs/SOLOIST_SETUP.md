@@ -1,4 +1,4 @@
-# Spotify Soloist setup — 1.3.1
+# Spotify Soloist setup — 1.3.2
 
 Use [HOST_SETUP.md](../HOST_SETUP.md) for the persistent Windows host, saved Soloist
 key, one-time USB Vita pairing and encrypted connections. `start_soloist.py`

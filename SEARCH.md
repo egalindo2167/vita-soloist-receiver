@@ -1,4 +1,4 @@
-# Search upcoming songs — version 1.3.1
+# Search upcoming songs — version 1.3.2
 
 ## What Soloist actually exposes
 
@@ -18,7 +18,7 @@ entries beyond Soloist's reply. Shorter lists, unavailable entries and different
 Soloist builds can produce different counts.
 
 The old app's 32-song limit was our display/message limit. That limit is removed
-for 1.3.1 clients: five rows are sent at a time, with search/indexing on the PC.
+for 1.3.2 clients: five rows are sent at a time, with search/indexing on the PC.
 Old receivers keep their legacy 32-row messages. Favorites still support 32
 shortcuts; this release does not change favorites editing.
 
@@ -28,7 +28,7 @@ measure what your installed Soloist build actually returns.
 
 ## Update and use
 
-1. Close the Vita app. Extract the complete 1.3.1 ZIP and run **pc/Upgrade Host.cmd**.
+1. Close the Vita app. Extract the complete 1.3.2 ZIP and run **pc/Upgrade Host.cmd**.
    Keep your current Soloist login/key, cable routing, pairing and Funnel profile.
 2. Install **dist/vita-audio-receiver.vpk** over the existing Vita app. Keep its
    saved data. Update both ends for search; no new pairing is required.

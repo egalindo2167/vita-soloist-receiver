@@ -65,8 +65,12 @@ def stamp_native(root,commit=None):
 def verify_native(root,commit=None):
     root=Path(root);expected=constants(root/'pc/native_hashes.py')
     if commit is not None and expected.get('SOURCE_COMMIT')!=source_commit(commit):raise ValueError('Native payloads were not built for this source commit')
+    manifest={}
     for name,key in (('soloist-capture.exe','HELPER_SHA256'),('opus.dll','OPUS_DLL_SHA256')):
         if hashlib.sha256((root/'pc/native'/name).read_bytes()).hexdigest()!=expected.get(key):raise ValueError('Native payload hash mismatch: '+name)
+        manifest[name]=expected[key]
+    rows=(root/'pc/native/SHA256SUMS.txt').read_text().splitlines()
+    if rows!=[digest+'  '+name for name,digest in manifest.items()]:raise ValueError('Native checksum manifest mismatch')
 
 def write_info(root,commit=None,run_url=None):
     root=Path(root);source_commit(commit)

@@ -1,5 +1,10 @@
 Vita Audio Receiver — Windows host
 
+SOURCE CHECKOUTS
+The Git repository omits generated Windows payloads and native_hashes.py.
+Download the complete application ZIP from Releases for normal installation.
+Developers must build native outputs first; see docs/dev/BUILDING.md.
+
 FIRST SETUP
 Use Windows 11 x64 and standard x64 Python 3.14 (not 3.14t/free-threaded).
 Extract the complete application ZIP; keep native/ with these scripts.

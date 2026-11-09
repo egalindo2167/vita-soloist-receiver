@@ -1,4 +1,4 @@
-# Paired audio/control link 1.3.1
+# Paired audio/control link 1.3.2
 
 Audio stays on TCP 48152 at the PC host. Discovery and control ports do not
 change. All multi-byte wire integers are little endian. PCM is stereo signed
@@ -190,7 +190,7 @@ keeping normal-speed playback and a bounded window. See [network tuning](NETWORK
 RSTA supports 16-, 24- and 28-byte payloads. All start with uint32 underruns,
 buffer_ms, seconds and playing. The 24-byte form adds actual kbps and remote.
 The 28-byte form appends capability bits: bit 0 supports AFLU; bit 1 supports
-queue-selection tokens; bit 2 supports 1.3.1 paged search/progress. New receivers send 28 bytes immediately after connection,
+queue-selection tokens; bit 2 supports 1.3.2 paged search/progress. New receivers send 28 bytes immediately after connection,
 then every five seconds. Unknown capability bits are ignored. Audio pacing uses
 VAQ2 on the audio connection, not this lower-frequency diagnostic channel.
 
@@ -216,7 +216,7 @@ of 32-item snapshots competing with the reset/control traffic on a poor link.
 Remote artwork remains around 8 KiB/s; Local around 80 KiB/s. The same TLS roles,
 USB credential, rotating identity, SNI and discovery formats remain in use.
 
-## Paged upcoming-song search — 1.3.1
+## Paged upcoming-song search — 1.3.2
 
 The host requests all available Soloist entries with get_queue(limit=0), indexes
 at most 10,000 entries and rejects upstream events over 16 MiB. This removes our

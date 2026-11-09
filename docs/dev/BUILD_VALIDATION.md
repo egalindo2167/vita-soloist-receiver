@@ -1,127 +1,82 @@
-# Release 1.3.1 verification
+# Release 1.3.2 verification
 
-## Outputs and checks performed
+## Scope
 
-- Vita/host visible version **1.3.1**, title ID **VRXA00001** retained, Vita
-  APP_VER **01.18**, LiveArea revision 18. The application cross-build completed
-  with official VitaSDK master-linux-v2.540 / GCC 15.2, without application
-  compiler warnings. No icon/accent/branding redesign was made in this revision.
-- SDK archive SHA-256:
-  `b1a8f4d6e41460c9ecf2c3c4590eb7eb3ea6b690767f508bd5696dbc77a4272e`.
-- **191 Python tests passed with no skips**, ResourceWarning treated as an error,
-  using Python 3.14.9 / OpenSSL 3.5.9 and locked dependencies. Optional native
-  TLS/profile/Opus adapters and official offline ngrok/Tailscale CLI checks were
-  enabled. No account, public tunnel, release or message was created by tests.
-- New cases check preserved PCM/Opus bitrate settings on upgrade, supported
-  Python ABI/architecture/TLS preflight, native hash/source-commit binding,
-  tag/version mismatch, public-release/moved-tag refusal, exact draft asset
-  names/checksums and tamper rejection. A real VPK package check caught binary
-  integer metadata being decoded as text; the validator now reads the identity
-  string fields only, with a dedicated mixed-type SFO regression test.
-- **15 native C test programs passed** AddressSanitizer/UndefinedBehaviorSanitizer
-  checks. LeakSanitizer is disabled in this traced environment. Control/render
-  cases include opening/cancelling/confirming disconnect, fresh touch handling,
-  one-shot requests, guarded framebuffer bounds and exact-black blanking.
-  Existing scaffold-only unused-stub/sign-compare warnings are not application
-  source warnings.
-- Windows EXE and Opus DLL were rebuilt from the checked source using the pinned
-  Zig 0.15.2 / Opus 1.6.1 recipes. Both are x86-64 PE files; generated expected
-  hashes and pc/native/SHA256SUMS.txt match. Linux cannot execute the Windows
-  payloads; the revised Windows CI job is responsible for their native checks.
-- **25 renderer previews** include player, queue/favorites/search, keyboard,
-  settings/quality, connection/error states, black idle and the new disconnect
-  confirmation. They use original fictional music/artwork fixtures. The modal
-  and player previews were visually inspected; idle remains pixel-exact black.
-- Final ZIP checks cover CRC, Python syntax, Markdown links, workflow YAML,
-  required source/docs/native files, VPK identity and bundled licenses. Runtime
-  credentials/preferences/recordings, build caches/SDKs, and separately obtained
-  Soloist/provider/driver executables are excluded. Favorites is an empty template.
+This revision corrects distribution/source hygiene after the public v1.3.1
+prerelease. The app/host display version is 1.3.2, Vita APP_VER is 01.19 and the
+LiveArea revision is 19. Title ID VRXA00001, UI design, controls, transport,
+codec behavior and saved settings remain unchanged. A new tag is required;
+published v1.3.1 assets and its tag must not be replaced.
 
-Local preparation hashes (CI rebuilds may produce different hashes):
+## Checks for this revision
 
-| Output | SHA-256 |
+The cleanup regression creates a real temporary Git repository with all ten
+obsolete guides and the four generated native outputs tracked. It verifies a
+preview makes no changes, applying cleanup records the guide deletions and
+untracks generated files while preserving their local bytes, repeated cleanup
+is safe, and a missing replacement prevents deletion. CI separately rejects
+tracked native outputs and obsolete guides before building.
+
+Archive tests reject every stale guide and any unknown root document, allowing
+current files and their relocated guides. Packaging rejects these cases before
+overwriting a previous archive. A tampered/stale native checksum manifest also
+fails even when the binaries and generated loader hashes otherwise match.
+Setup preflight gives source users an actionable missing-build message.
+
+The full native/Python wrapper is run with Python 3.14.9 / OpenSSL 3.5.9,
+hash-locked dependencies and optional native TLS/profile/Opus plus offline
+provider CLI adapters. See the verification result at the end of this document.
+The Vita VPK is cross-built with official VitaSDK master-linux-v2.540 / GCC 15.2.
+The source archive's upstream SDK digest is recorded in prior development
+history; no fixed output-binary digest is copied into this guide.
+
+## Verify files from the release you downloaded
+
+| Files | Authoritative generated checksum record |
 | --- | --- |
-| Vita VPK | `71c8384b35302517b09c6878640cba1c91662c0719662f581c9263acf65f2cc2` |
-| Capture EXE | `edb76237cb796b12d7c9258ba82e7a090c9c68409f40002583b843a475f8bd35` |
-| Opus DLL | `bedfd641d5bf47bef9af4c7bcb47da6f509c3c012809d6b87e283fdadfb94b17` |
+| Application ZIP and standalone VPK | SHA256SUMS.txt attached to that GitHub Release |
+| VPK inside the application ZIP | dist/SHA256SUMS.txt inside that ZIP |
+| Windows capture helper and Opus DLL | pc/native/SHA256SUMS.txt inside that ZIP |
 
-These are file identities, not an assertion of byte-identical rebuilds or digital
-signatures. Release loaders use each package's generated expected native hashes.
+`pc/native_hashes.py` must agree with the native manifest and actual files.
+`BUILD_INFO.txt` identifies the version, exact CI source commit and run URL;
+CI-generated native metadata binds to that commit. Locally prepared packages
+are explicitly labelled local preparation. A binary rebuilt on another machine
+may have different bytes; checksums are neither signatures nor a claim of
+reproducible builds. No handwritten local output hashes are verification targets.
 
-## Publication checks and limits
+## CI and hardware limits
 
-The official public GitHub API confirmed **egalindo2167/vita-soloist-receiver**
-exists with default branch main. No public tag/release existed when checked.
-All configured external actions are full-commit pins with Node 24 runtimes;
-inputs/name/path and the SDK image digest were checked. Workflow jobs normally
-have contents:read with nonpersistent checkout credentials. Only a matching
-version-tag push grants the final draft job contents:write.
+The official GitHub API confirmed that v1.3.1 is a published prerelease, and that
+main still tracks the ten obsolete root guides. The fix's Git cleanup must be
+committed in that repository; extracting a ZIP alone cannot record deletions.
+The 1.3.2 workflow has not yet been run on GitHub. Its source-built Windows
+payloads must pass the Windows tests, Linux tests, SDK build and draft checks
+before publication. [PUBLISHING.md](PUBLISHING.md) gives the exact procedure.
 
-The revised workflow builds Windows payloads from the checkout, tests those
-outputs on Windows, builds the VPK, and packages a versioned ZIP with source/run
-metadata and hashes. Draft-publication tests use fake gh calls and assert that
-public releases and moved tags cannot be overwritten. No actual push/tag/draft
-or complete GitHub-hosted run of this new workflow was performed here. The
-user's earlier Windows-green screenshot applies to the preceding workflow.
-A successful tag run and review of its exact draft assets are still required.
-See [PUBLISHING.md](PUBLISHING.md); do not substitute the local preparation ZIP
-for those CI-built public assets.
+This environment cannot exercise physical Windows audio routing, Smart App
+Control or Vita firmware/touch/screen-off/Wi-Fi behavior. Windows binaries are
+unsigned. Passing automated checks is not an independent security audit.
+Title-ID availability still needs confirmation before a separate VitaDB
+submission. Install new VPKs over the existing title without deleting data.
 
-The native Windows components are unsigned. Actual Windows audio routing,
-Smart App Control enforcement, firmware touch/panel/screen-off behavior and
-sustained physical Vita Wi-Fi playback have not been tested in this Linux
-environment. Passing checks is not an independent security audit.
+Check playback, queue/search, favorites, quality preferences, reconnect and
+screen-off listening using the host and VPK from the same CI-created release.
+For first setup follow [HOST_SETUP.md](../../HOST_SETUP.md) and
+[AUDIO_SETUP.md](../../AUDIO_SETUP.md). [SEARCH.md](../../SEARCH.md) documents
+Soloist's returned-queue limits; synthetic large-queue tests do not demonstrate
+whole-playlist availability. Branding and dialog wording are unchanged.
 
-The title ID was not globally certified available: the official VitaDB catalog
-lookup did not yield a usable catalog. Confirm it with the current catalog/
-maintainer before a separate VitaDB submission. Retaining the current ID avoids
-creating a different installed app/data location for existing testers.
+## Local verification result
 
-## Functional acceptance checks on Windows and Vita
+The full native wrapper completed successfully: **200 Python tests passed with
+no skips**, ResourceWarning treated as error, plus **15 native C programs** with
+address/undefined-behavior sanitizers. Both official provider CLI offline checks
+and native TLS/profile/Opus adapters were enabled. The 1.3.2 / 01.19 VPK SDK
+build completed successfully. No live provider account, remote release write,
+GitHub push or physical Windows/Vita execution was performed.
 
-Use the host and VPK from the same release. Upgrade Host should preserve the
-saved codec/bitrate, routing, login/key, pairing and remote options. Install over
-the existing title without deleting data. From Now playing, Circle must show a
-confirmation; Circle cancels, X disconnects, and Queue/settings/keyboard retain
-ordinary back behavior. Test a fresh tap as well as controller input.
-
-On a fresh PC follow [HOST_SETUP.md](../../HOST_SETUP.md), including standard x64
-Python, virtual cable, trusted Private LAN/firewall and USB pairing. Test cable
-isolation, muted physical speakers, restart/reconnect, both quality preferences,
-Local/Remote modes and screen-off playback. Record actual Windows policy blocks
-without disabling protection. See [AUDIO_SETUP.md](../../AUDIO_SETUP.md) and
-[network tuning](../NETWORK_TUNING.md) for diagnostic counters.
-
-Search remains limited to entries Soloist actually returns. Spotify documents
-up to 80 upcoming tracks. Existing synthetic 5,000-entry pagination fixtures and
-79-confirmed-skip/cancellation tests do not demonstrate that Soloist returns a
-whole large playlist. [SEARCH.md](../../SEARCH.md) documents the read-only probe,
-limits and skip/history cautions. Long-jump limits and branding are unchanged.
-
-Pre-public implementation records remain in
-[DEVELOPMENT_HISTORY.md](DEVELOPMENT_HISTORY.md) and the historical review files.
-
-## Native CI stall follow-up
-
-The supplied GitHub log shows both dependencies and all 15 native programs
-finished within about 43 seconds. Python then stalled before the next test
-result, until the 30-minute job deadline. The prior download retry recovered;
-compiler warnings did not stop this run.
-
-The next module's two TLS audio tests, plus a capture-error test, had header
-loops that never handled EOF. An encoder startup failure could therefore close
-the socket and leave a test spinning forever. Those reads now fail on EOF.
-The native Opus shared library also lacked a SONAME and unversioned linker
-name, making ctypes discovery unreliable on fresh runners without system Opus.
-The native build now supplies both; library discovery was verified with the
-system-cache/compiler search paths deliberately bypassed.
-
-Both CI Python invocations now use a 120-second per-test watchdog, printing
-the test name and all thread stacks before exiting with failure (124). This
-does not skip tests or extend the job deadline. Regression checks cover partial
-header EOF and a real intentionally hung child test with a short deadline.
-These two checks passed on the available Python 3.12 runtime. The earlier
-191-test Python 3.14 run remains recorded above; the full revised suite was
-not rerun here because that transient interpreter is no longer available.
-No PC/Vita runtime source, native shipped binary or VPK changed in this fix.
-A new GitHub run must verify the corrected fresh-runner path.
+Final packaging checks cover generated manifests, matching VPK contents,
+allowlisted root files, absence of private data, complete licenses and source
+staging with generated files ignored. Renderer previews were regenerated for
+the version label only; no layout, color, icon or disconnect wording changed.

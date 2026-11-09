@@ -14,8 +14,65 @@ from unittest import mock
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tools'))
 import release_metadata as metadata
 import publish_release
+import source_policy
+import clean_source_checkout
+import package_release
+import subprocess
+import contextlib
+import io
 
 class ReleaseMetadataTests(unittest.TestCase):
+    def test_archive_root_allowlist_rejects_each_old_guide_and_unreviewed_new_file(self):
+        for name in [*source_policy.MOVED_DOCUMENTS,'UNREVIEWED.md']:
+            with self.subTest(name=name),io.BytesIO() as content:
+                with zipfile.ZipFile(content,'w') as archive:archive.writestr('vita-audio-receiver/'+name,'stale')
+                with zipfile.ZipFile(content) as archive,self.assertRaisesRegex(ValueError,'Unapproved'):source_policy.check_archive(archive)
+        with io.BytesIO() as content:
+            with zipfile.ZipFile(content,'w') as archive:
+                archive.writestr('vita-audio-receiver/README.md','current')
+                archive.writestr('vita-audio-receiver/docs/dev/BUILDING.md','current')
+            with zipfile.ZipFile(content) as archive:source_policy.check_archive(archive)
+
+    def test_obsolete_or_unapproved_root_docs_cannot_replace_an_existing_archive(self):
+        output=self.root.parent/(self.root.name+'.zip');self.addCleanup(lambda:output.unlink(missing_ok=True))
+        output.write_bytes(b'previous')
+        for name in [*source_policy.MOVED_DOCUMENTS,'UNREVIEWED.md']:
+            p=self.root/name;p.write_text('stale')
+            with self.subTest(name=name),self.assertRaises(ValueError):package_release.package(self.root,output)
+            self.assertEqual(output.read_bytes(),b'previous');p.unlink()
+
+    def test_git_cleanup_records_all_ten_deletions_and_untracks_generated_files(self):
+        for old,new in source_policy.MOVED_DOCUMENTS.items():
+            (self.root/old).write_text('old');p=self.root/new;p.parent.mkdir(parents=True,exist_ok=True);p.write_text('replacement')
+        for name in source_policy.GENERATED_NATIVE:
+            p=self.root/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_text('generated')
+        (self.root/'keep.txt').write_text('keep')
+        subprocess.run(['git','init','-q',str(self.root)],check=True)
+        def git(*args):return subprocess.run(['git','-C',str(self.root),*args],check=True,capture_output=True,text=True)
+        git('add','.');git('-c','user.name=Fixture','-c','user.email=fixture@example.invalid','commit','-qm','Fixture')
+        with self.assertRaisesRegex(ValueError,'Obsolete'):source_policy.check_checkout(self.root,True)
+        with contextlib.redirect_stdout(io.StringIO()):
+            clean_source_checkout.clean(self.root,False)
+            self.assertTrue((self.root/'BUILDING.md').exists())
+            clean_source_checkout.clean(self.root,True)
+            clean_source_checkout.clean(self.root,True) # repeat safely
+        source_policy.check_checkout(self.root,True)
+        tracked=set(git('ls-files').stdout.splitlines())
+        self.assertFalse(tracked&set(source_policy.MOVED_DOCUMENTS));self.assertFalse(tracked&source_policy.GENERATED_NATIVE)
+        self.assertTrue(all((self.root/name).exists() for name in source_policy.GENERATED_NATIVE))
+        self.assertEqual((self.root/'keep.txt').read_text(),'keep')
+
+    def test_git_policy_also_rejects_generated_binaries_without_stale_guides(self):
+        subprocess.run(['git','init','-q',str(self.root)],check=True)
+        (self.root/'pc/native/opus.dll').write_bytes(b'generated')
+        subprocess.run(['git','-C',str(self.root),'add','.'],check=True)
+        with self.assertRaisesRegex(ValueError,'must not be tracked'):source_policy.check_checkout(self.root,True)
+
+    def test_cleanup_never_deletes_a_guide_without_its_replacement(self):
+        subprocess.run(['git','init','-q',str(self.root)],check=True)
+        old=self.root/'BUILDING.md';old.write_text('keep until replacement exists')
+        with self.assertRaisesRegex(ValueError,'Missing replacement'):clean_source_checkout.clean(self.root,True)
+        self.assertTrue(old.exists())
     def setUp(self):
         tmp=tempfile.TemporaryDirectory();self.addCleanup(tmp.cleanup);self.root=Path(tmp.name)
         (self.root/'pc/native').mkdir(parents=True);(self.root/'pc/version.py').write_text("VERSION='1.3.1'\n")
@@ -54,6 +111,12 @@ class ReleaseMetadataTests(unittest.TestCase):
         (self.root/'pc/native/opus.dll').write_bytes(b'tampered')
         with self.assertRaisesRegex(ValueError,'hash mismatch'):metadata.verify_native(self.root,self.commit)
         with self.assertRaisesRegex(ValueError,'Windows payload'):metadata.stamp_native(self.root,self.commit)
+
+    def test_a_stale_native_manifest_is_not_accepted(self):
+        for name in ('soloist-capture.exe','opus.dll'):self.pe(name)
+        metadata.stamp_native(self.root,self.commit)
+        (self.root/'pc/native/SHA256SUMS.txt').write_text('outdated checksum')
+        with self.assertRaisesRegex(ValueError,'manifest mismatch'):metadata.verify_native(self.root,self.commit)
 
     def test_vpk_identity_ignores_binary_integer_fields_and_rejects_wrong_version(self):
         (self.root/'build').mkdir()

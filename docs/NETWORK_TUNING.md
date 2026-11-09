@@ -1,4 +1,4 @@
-# Audio transport and queue changes — version 1.3.1
+# Audio transport and queue changes — version 1.3.2
 
 Keep your existing paired Vita, Soloist login, cable routing and Funnel profile.
 Update both host and VPK. Opus remains 320 kbps unless you select a different
@@ -79,7 +79,7 @@ the buffer delay to reach your ears.
 The 10-item broadcast prefix is merged with a matching cached tail by entry ID.
 A requested short snapshot is debounced for 350 ms so a broadcast immediately
 ahead of the full local reply cannot collapse the visible window. Actual short
-queues and context changes replace/invalidate the cached tail. Version 1.3.1
+queues and context changes replace/invalidate the cached tail. Version 1.3.2
 requests all available entries and sends five-row searchable pages. Spotify
 documents up to 80 upcoming tracks, not the whole playlist. Songs beyond the
 returned window remain in Spotify's actual queue. See SEARCH.md. Repeated

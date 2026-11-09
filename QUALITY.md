@@ -1,4 +1,4 @@
-# Choose stream quality on the Vita — 1.3.1
+# Choose stream quality on the Vita — 1.3.2
 
 First complete [HOST_SETUP.md](HOST_SETUP.md). While connected, or on the
 connection screen:

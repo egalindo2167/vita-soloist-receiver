@@ -47,7 +47,7 @@ executables/DLLs do not. A populated favorites template must fail before replaci
 an existing release archive. The Windows/GitHub-copy path calls the native test
 script through bash, without relying on an executable mode bit.
 
-## Release 1.3.1 additions
+## Release 1.3.2 additions
 
 Search tests cover the all-available queue request, the documented 80-entry
 window, a 5,000-entry synthetic index, the 10,000-entry safety cap, normalization,

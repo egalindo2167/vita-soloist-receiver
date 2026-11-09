@@ -1,4 +1,4 @@
-# Vita interface — version 1.3.1
+# Vita interface — version 1.3.2
 
 ## First use
 

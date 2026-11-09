@@ -1,4 +1,4 @@
-# Remote access with Tailscale Funnel — receiver 1.3.1
+# Remote access with Tailscale Funnel — receiver 1.3.2
 
 Keep **Opus 320 kbps**, or choose a lower fixed rate/Auto on the Vita, and use it from a different
 network. Tailscale runs on the Windows PC only. The Vita uses the public Funnel
@@ -36,7 +36,7 @@ The helper requires the current CLI syntax (Tailscale 1.52 or newer).
 
 ## 3. Enable Funnel once
 
-1. Double-click **pc/Setup Funnel.cmd** in the extracted 1.3.1 folder.
+1. Double-click **pc/Setup Funnel.cmd** in the extracted 1.3.2 folder.
 2. Read its console output. If it prints a Tailscale authorization URL, open
    that URL on your PC, sign in if asked, and approve enabling Funnel/HTTPS.
    Setup allows up to ten minutes for this first approval. Do not close the

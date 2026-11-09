@@ -5,6 +5,7 @@ import hashlib
 import json
 from pathlib import Path
 import zipfile
+from source_policy import check_checkout,check_root_name,check_archive
 
 SKIP_DIRS={'build','__pycache__','.pytest_cache','.git','.venv','venv','node_modules'}
 SKIP_NAMES={'host.json','funnel.json','tunnel.json','paired-vitas.json','quality.bin','display.bin',
@@ -13,6 +14,11 @@ SKIP_NAMES={'host.json','funnel.json','tunnel.json','paired-vitas.json','quality
 
 def package(root,output):
     root=Path(root).resolve();output=Path(output).resolve()
+    check_checkout(root)
+    # Reject unexpected root documents before replacing an existing archive.
+    for path in root.iterdir():
+        if path.is_file() and path!=output and (path.suffix.lower() in {'.py','.c','.h','.md','.txt','.cmd','.lock','.png','.svg','.xml','.yml','.yaml','.sh','.vpk','.dll','.json'} or path.name in {'LICENSE','.gitignore','.gitattributes'}):
+            if path.name not in SKIP_NAMES:check_root_name(path.name)
     try:empty_favorites=json.loads((root/'pc/favorites.json').read_text(encoding='utf-8-sig'))==[]
     except (OSError,ValueError) as exc:raise ValueError('pc/favorites.json must be an empty release template.') from exc
     if not empty_favorites:raise ValueError('pc/favorites.json must be an empty release template; do not publish personal favorites.')
@@ -36,6 +42,7 @@ def package(root,output):
             archive.write(path,Path('vita-audio-receiver')/relative)
     with zipfile.ZipFile(output) as archive:
         if archive.testzip() is not None:raise RuntimeError('Archive integrity check failed')
+        check_archive(archive)
     text=hashlib.sha256(output.read_bytes()).hexdigest()+'  '+output.name+'\n'+checksum+'  '+vpk.name+'\n'
     output.with_suffix(output.suffix+'.sha256').write_text(text);print(text,end='')
 

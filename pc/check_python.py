@@ -4,6 +4,12 @@ import ssl
 import struct
 import sys
 import sysconfig
+from pathlib import Path
+
+def validate_payloads(directory=None):
+    directory=Path(directory) if directory is not None else Path(__file__).resolve().parent
+    if not all((directory/name).is_file() for name in ('native_hashes.py','native/soloist-capture.exe','native/opus.dll')):
+        raise RuntimeError('Built Windows payloads are missing. Download the complete application ZIP from Releases. Source users must build with tools/build_release_payloads.py on Linux first.')
 
 def validate():
     if sys.implementation.name!='cpython' or sys.version_info[:2]!=(3,14):
@@ -16,6 +22,6 @@ def validate():
         raise RuntimeError('This Python/OpenSSL lacks TLS-PSK. Use the standard python.org Python 3.14 runtime.')
 
 if __name__=='__main__':
-    try:validate()
+    try:validate();validate_payloads()
     except RuntimeError as exc:print('Python setup:',exc);raise SystemExit(1)
     print('Python 3.14 x64, standard ABI and TLS-PSK are ready.')

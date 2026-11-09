@@ -1,6 +1,14 @@
 # Changes
 
-## 1.3.1 — first public candidate
+## 1.3.2 — distribution fixes
+
+- Remove obsolete root guides from Git; reject stale/unapproved release-root files.
+- Refer to generated release checksum manifests instead of local output hashes.
+- Keep generated Windows binaries and loader hashes out of source control; CI passes fresh payloads to both test jobs.
+- Add tested checkout cleanup and actionable source-build setup guidance.
+- UI, controls and audio behavior are unchanged.
+
+## 1.3.1 — first public prerelease
 
 - Windows PC bridge with process-only Soloist capture, paired TLS, Opus/PCM,
   cover art and Spotify playback controls for a homebrew PS Vita.

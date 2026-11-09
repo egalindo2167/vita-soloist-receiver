@@ -1,13 +1,23 @@
-# Vita Audio Receiver 1.3.1 — First public release
+# Vita Audio Receiver 1.3.2 — Prerelease packaging fixes
 
 Stream Spotify Soloist from a Windows PC to a homebrew PS Vita, with a
 desktop-inspired interface, cover art, Spotify controls and upcoming-song search.
 This is an unofficial community homebrew project, not a standalone Vita Spotify
 client or an app endorsed by Spotify/Sony.
 
+## Changes from 1.3.1
+
+- Removed obsolete root guides; packaging now rejects stale or unapproved root
+  files and CI checks source hygiene before rebuilding.
+- Documentation points to each release's generated checksum manifests.
+- Git contains native source/recipes instead of generated Windows binaries and
+  loader hashes; CI builds, tests and packages the matching outputs.
+- Clear source-build guidance and missing-payload setup errors.
+- UI design, controls, audio quality, pairing and saved settings are unchanged.
+
 ## Download and setup
 
-Download **vita-audio-receiver-1.3.1.zip** from the assets below and **extract it**.
+Download **vita-audio-receiver-1.3.2.zip** from the assets below and **extract it**.
 It includes the Windows host, required native helper/Opus DLL, prebuilt Vita VPK,
 source, licenses and step-by-step guides. GitHub's automatic Source code archives
 are for developers; they do not contain the prebuilt VPK.
